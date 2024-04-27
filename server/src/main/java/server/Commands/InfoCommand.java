@@ -2,7 +2,7 @@ package server.Commands;
 
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 
@@ -35,8 +35,8 @@ public class InfoCommand extends UserCommand {
      * @return
      */
     @Override
-    public ExecuteCommandResponse execute() {
-        return new ExecuteCommandResponse(ResultState.SUCCESS,
+    public ServerResponse execute() {
+        return new ServerResponse(ResultState.SUCCESS,
                 this.collectionController.getInfo());
     }
 }

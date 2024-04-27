@@ -25,13 +25,13 @@ public class ClearCommand extends UserCommand {
      * <p>It sends request to clear collection
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         try {
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), new ArrayList<>())));
-            return (ExecuteCommandResponse) UDPClient.getInstance().receiveObject();
+            return (ServerResponse) UDPClient.getInstance().receiveObject();
         }
         catch (Exception e) {
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            return new ServerResponse(ResultState.EXCEPTION, e);
         }
     }
 }

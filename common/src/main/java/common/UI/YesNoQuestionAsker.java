@@ -25,7 +25,7 @@ public class YesNoQuestionAsker {
         if(Constants.SCRIPT_MODE) return true;
         Console.getInstance().printLn(question + " (yes/no)");
         while (true){
-            String userAnswer = Console.getInstance().readLine().trim();
+            String userAnswer = Console.getInstance().readLine();
             if(userAnswer.equals("yes")){
                 return true;
             }

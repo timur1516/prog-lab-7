@@ -1,12 +1,8 @@
 package common.Commands;
 
 import common.Controllers.CommandsController;
-import common.Exceptions.WrongAmountOfArgumentsException;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
-
-import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Class with realization of help command
@@ -34,11 +30,11 @@ public class HelpCommand extends UserCommand {
      * <p>It gets all commands from commandController and then prints their description
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         String result = "";
         for(UserCommand command : this.commandsController.getCommandsList()){
             result += command.toString() + "\n";
         }
-        return new ExecuteCommandResponse(ResultState.SUCCESS, result);
+        return new ServerResponse(ResultState.SUCCESS, result);
     }
 }

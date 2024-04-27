@@ -10,10 +10,13 @@ import common.Commands.HelpCommand;
 import common.Constants;
 import common.Controllers.CommandsController;
 import client.Readers.WorkerReader;
+import common.Exceptions.ReceivingDataException;
+import common.Exceptions.SendingDataException;
 import common.UI.CommandReader;
 import common.UI.Console;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.UserInfo;
+import common.net.requests.ServerResponse;
 import common.net.requests.PackedCommand;
 
 /**
@@ -24,6 +27,8 @@ import common.net.requests.PackedCommand;
 public class Main {
     private static final int TIMEOUT = 1000;
     private static WorkerReader workerReader;
+
+    public static UserInfo user;
     /**
      * Controller of commands
      */
@@ -47,6 +52,15 @@ public class Main {
             Console.getInstance().printError("Error while starting client!");
             System.exit(0);
         }
+
+        try {
+            user = AuthorizationController.authorize();
+        } catch (SendingDataException | ReceivingDataException e) {
+            Console.getInstance().printError(e.getMessage());
+            System.exit(0);
+        }
+        
+        Console.getInstance().printLn(String.format("Hello %s!", user.userName()));
 
         commandsController = new CommandsController();
         commandsController.setCommandsList(
@@ -81,7 +95,7 @@ public class Main {
             Console.getInstance().printLn(packedCommand.commandName());
 
             UserCommand command = commandsController.launchCommand(packedCommand);
-            ExecuteCommandResponse responce = command.execute();
+            ServerResponse responce = command.execute();
             switch (responce.state()){
                 case SUCCESS:
                     Console.getInstance().printLn(responce.data());
@@ -110,7 +124,7 @@ public class Main {
                 Console.getInstance().printError(e.getMessage());
                 continue;
             }
-            ExecuteCommandResponse responce = command.execute();
+            ServerResponse responce = command.execute();
             switch (responce.state()){
                 case SUCCESS:
                     Console.getInstance().printLn(responce.data());

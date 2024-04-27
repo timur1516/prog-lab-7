@@ -1,15 +1,12 @@
 package server.Commands;
 
-import common.Exceptions.WrongAmountOfArgumentsException;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 import server.Controllers.DataFileController;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Class with realization of save command
@@ -45,14 +42,14 @@ public class SaveCommand extends UserCommand {
      * @return
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         try {
             this.dataFileController.writeToJSON(this.collectionController.getCollection());
             this.collectionController.removeChangeFlag();
-            return new ExecuteCommandResponse(ResultState.SUCCESS,
+            return new ServerResponse(ResultState.SUCCESS,
                     "Collection saved successfully!");
         } catch (IOException e) {
-            return new ExecuteCommandResponse(ResultState.EXCEPTION,
+            return new ServerResponse(ResultState.EXCEPTION,
                     new IOException("An error occurred while writing to the file!"));
         }
     }

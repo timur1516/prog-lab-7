@@ -32,7 +32,7 @@ public class CommandReader {
      */
     public PackedCommand readCommand(){
         String line = Console.getInstance().readLine();
-        String[] input = (line.trim() + " ").split(" ");
+        String[] input = (line + " ").split(" ");
         if (input.length == 0) return null;
         String commandName = input[0];
         String[] commandArgs = Arrays.copyOfRange(input, 1, input.length);

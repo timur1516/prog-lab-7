@@ -46,9 +46,8 @@ public class Console {
      * @return String line
      */
     public String readLine(){
-        return scanner.nextLine();
+        return scanner.nextLine().trim();
     }
-
     /**
      * Method to check if input stream has next line
      * @return true if it has, false otherwise

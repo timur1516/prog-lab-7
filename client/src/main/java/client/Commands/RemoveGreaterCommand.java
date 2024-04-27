@@ -4,7 +4,6 @@ import client.Readers.WorkerReader;
 import client.UDPClient;
 import common.Collection.Worker;
 import common.Constants;
-import common.Exceptions.WrongAmountOfArgumentsException;
 import common.Commands.UserCommand;
 import common.net.requests.*;
 
@@ -40,14 +39,14 @@ public class RemoveGreaterCommand extends UserCommand {
      *
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         try {
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.IS_COLLECTION_EMPTY, null));
             if ((boolean)(UDPClient.getInstance().receiveObject())) {
                 if (Constants.SCRIPT_MODE) {
                     workerReader.readWorker();
                 }
-                return new ExecuteCommandResponse(ResultState.SUCCESS, "Collection is empty!");
+                return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
             }
 
             Worker worker = this.workerReader.readWorker();
@@ -56,9 +55,9 @@ public class RemoveGreaterCommand extends UserCommand {
 
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
 
-            return (ExecuteCommandResponse) UDPClient.getInstance().receiveObject();
+            return (ServerResponse) UDPClient.getInstance().receiveObject();
         } catch (Exception e){
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            return new ServerResponse(ResultState.EXCEPTION, e);
         }
     }
 }

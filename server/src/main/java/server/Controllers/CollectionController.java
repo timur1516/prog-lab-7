@@ -1,15 +1,22 @@
 package server.Controllers;
 
-import common.Collection.Worker;
+import common.Collection.*;
 import common.Constants;
 import common.Exceptions.InvalidDataException;
 import common.Validators.WorkerValidators;
+import server.DBQueries;
+import server.Main;
 
-import java.net.SocketAddress;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static server.Main.logger;
 
 /**
  * Class which completes all operations with Collection of workers
@@ -33,10 +40,9 @@ public class CollectionController {
     /**
      * CollectionController constructor
      * <p>Completes initialization of collection, generate creationDate and set changeFlag to false
-     * @param collection
      */
-    public CollectionController(PriorityQueue<Worker> collection) {
-        this.collection = collection;
+    public CollectionController() {
+        collection = new PriorityQueue<>();
         this.creationDate = LocalDateTime.now();
         this.changeFlag = false;
     }
@@ -246,5 +252,46 @@ public class CollectionController {
                 .stream()
                 .map(Worker::getSalary)
                 .sorted(Comparator.reverseOrder()).toList();
+    }
+
+    /**
+     * Method to load collection from SQL database
+     * <p>Before saving, validation of loaded collection is completed
+     * @throws SQLException
+     */
+    public void loadCollection() throws SQLException {
+        ResultSet resultSet = DBQueries.GET_COLLECTION.executeQuery();
+
+        PriorityQueue<Worker> data = new PriorityQueue<>();
+
+        while(resultSet.next()){
+            long id = resultSet.getLong("id");
+            String name = resultSet.getString("name");
+            double x = resultSet.getDouble("x");
+            double y = resultSet.getDouble("y");
+            ZonedDateTime creationDate = resultSet.getObject("creationDate", OffsetDateTime.class).toZonedDateTime();
+            Integer salary = resultSet.getInt("salary");
+            LocalDateTime startDate = resultSet.getTimestamp("startDate").toLocalDateTime();
+            LocalDateTime endDate = resultSet.getTimestamp("endDate") == null ? null : resultSet.getTimestamp("endDate").toLocalDateTime();
+            Status status = Status.valueOf(resultSet.getString("status"));
+            Long height = resultSet.getLong("height");
+            Color eyeColor = resultSet.getString("eyeColor") == null ? null : Color.valueOf(resultSet.getString("eyeColor"));
+            Country nationality = resultSet.getString("nationality") == null ? null : Country.valueOf(resultSet.getString("nationality"));
+
+            Coordinates coordinates = new Coordinates(x, y);
+            Person person = height == 0 ? null : new Person(height, eyeColor, nationality);
+            Worker worker = new Worker(id, name, coordinates, creationDate, salary, startDate, endDate, status, person);
+            data.add(worker);
+        }
+        resultSet.close();
+        DBQueries.GET_COLLECTION.close();
+
+        if(isValid(data)) {
+            collection = data;
+            logger.info("Collection have been loaded successfully!");
+        }
+        else{
+            logger.error("Collection was not loaded! Not valid data!");
+        }
     }
 }

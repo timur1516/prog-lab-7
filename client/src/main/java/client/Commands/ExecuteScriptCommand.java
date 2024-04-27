@@ -7,7 +7,7 @@ import client.Exceptions.RecursiveScriptException;
 import common.Exceptions.WrongAmountOfArgumentsException;
 import common.FileLoader;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -44,38 +44,38 @@ public class ExecuteScriptCommand extends UserCommand {
      * @return ExecuteCommandResponse Result of executing script file
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
 
         File scriptFile;
         try {
             scriptFile = new FileLoader().loadFile(scriptFilePath, "txt", "r", "Script file");
         } catch (FileNotFoundException e) {
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            return new ServerResponse(ResultState.EXCEPTION, e);
         }
 
         if(!Constants.scriptStack.isEmpty() && Constants.scriptStack.contains(scriptFilePath)){
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, new RecursiveScriptException("Script is recursive!"));
+            return new ServerResponse(ResultState.EXCEPTION, new RecursiveScriptException("Script is recursive!"));
         }
 
         Scanner prevScanner = Console.getInstance().getScanner();
         try {
             Console.getInstance().setScanner(new Scanner(new FileInputStream(scriptFile)));
         } catch (FileNotFoundException e) {
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, "Script file reading error!");
+            return new ServerResponse(ResultState.EXCEPTION, "Script file reading error!");
         }
 
         Constants.scriptStack.push(scriptFilePath);
 
         Constants.SCRIPT_MODE = true;
 
-        ExecuteCommandResponse responce;
+        ServerResponse responce;
 
         try {
             Main.scriptMode();
-            responce = new ExecuteCommandResponse(ResultState.SUCCESS,"Script executed successfully!");
+            responce = new ServerResponse(ResultState.SUCCESS,"Script executed successfully!");
         }
         catch (Exception e){
-            responce = new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            responce = new ServerResponse(ResultState.EXCEPTION, e);
         }
         finally {
             Constants.scriptStack.pop();

@@ -1,11 +1,9 @@
 package client.Commands;
 
 import client.UDPClient;
-import common.Exceptions.WrongAmountOfArgumentsException;
 import common.Commands.UserCommand;
 import common.net.requests.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -29,12 +27,12 @@ public class ShowCommand extends UserCommand {
      * <p>If collection is empty user is informed
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         try {
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), new ArrayList<>())));
-            return (ExecuteCommandResponse) UDPClient.getInstance().receiveObject();
+            return (ServerResponse) UDPClient.getInstance().receiveObject();
         } catch (Exception e) {
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            return new ServerResponse(ResultState.EXCEPTION, e);
         }
     }
 }

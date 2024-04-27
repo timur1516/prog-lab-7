@@ -2,7 +2,7 @@ package server.Commands;
 
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 
@@ -35,8 +35,8 @@ public class ClearCommand extends UserCommand {
      * @return
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         this.collectionController.clear();
-        return new ExecuteCommandResponse(ResultState.SUCCESS, "Collection cleared successfully!");
+        return new ServerResponse(ResultState.SUCCESS, "Collection cleared successfully!");
     }
 }

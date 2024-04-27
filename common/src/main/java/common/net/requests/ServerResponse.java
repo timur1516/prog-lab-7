@@ -7,4 +7,4 @@ import java.io.Serializable;
  * @param state Result state
  * @param data Serializable data with result
  */
-public record ExecuteCommandResponse(ResultState state, Serializable data) implements Serializable {}
+public record ServerResponse(ResultState state, Serializable data) implements Serializable {}

@@ -2,7 +2,7 @@ package server.Commands;
 
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 
@@ -36,12 +36,12 @@ public class RemoveFirstCommand extends UserCommand {
      * @return
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         if(this.collectionController.getCollection().isEmpty()){
-            return new ExecuteCommandResponse(ResultState.SUCCESS, "Collection is empty!");
+            return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
         this.collectionController.removeFirst();
-        return new ExecuteCommandResponse(ResultState.SUCCESS,
+        return new ServerResponse(ResultState.SUCCESS,
                 "Element removed successfully!");
     }
 }

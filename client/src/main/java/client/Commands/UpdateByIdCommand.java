@@ -49,14 +49,14 @@ public class UpdateByIdCommand extends UserCommand {
      * @throws NoSuchElementException is element with given id was not found
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         try {
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.CHECK_ID, id));
             if (!(boolean)(UDPClient.getInstance().receiveObject())) {
                 if (Constants.SCRIPT_MODE) {
                     workerReader.readWorker();
                 }
-                return new ExecuteCommandResponse(ResultState.EXCEPTION,
+                return new ServerResponse(ResultState.EXCEPTION,
                         new NoSuchElementException("No element with such id!"));
             }
             Worker worker = workerReader.readWorker();
@@ -64,9 +64,9 @@ public class UpdateByIdCommand extends UserCommand {
             arguments.add(id);
             arguments.add(worker);
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
-            return (ExecuteCommandResponse) UDPClient.getInstance().receiveObject();
+            return (ServerResponse) UDPClient.getInstance().receiveObject();
         } catch (Exception e){
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            return new ServerResponse(ResultState.EXCEPTION, e);
         }
     }
 

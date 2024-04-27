@@ -3,7 +3,7 @@ package server.Commands;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
 import common.Exceptions.InvalidDataException;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 
@@ -47,13 +47,13 @@ public class RemoveByIdCommand extends UserCommand {
      * @throws NoSuchElementException is element with given id was not found
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         if(!collectionController.containsId(id)){
-            return new ExecuteCommandResponse(ResultState.EXCEPTION,
+            return new ServerResponse(ResultState.EXCEPTION,
                     new NoSuchElementException("No element with such id!"));
         }
         this.collectionController.removeById(id);
-        return new ExecuteCommandResponse(ResultState.SUCCESS, "Element removed successfully!");
+        return new ServerResponse(ResultState.SUCCESS, "Element removed successfully!");
     }
 
     @Override

@@ -36,16 +36,16 @@ public class AddCommand extends UserCommand {
      * @return
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         try {
             Worker worker = this.workerReader.readWorker();
             ArrayList<Serializable> arguments = new ArrayList<>();
             arguments.add(worker);
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
-            return (ExecuteCommandResponse) UDPClient.getInstance().receiveObject();
+            return (ServerResponse) UDPClient.getInstance().receiveObject();
         }
         catch (Exception e) {
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            return new ServerResponse(ResultState.EXCEPTION, e);
         }
     }
 }

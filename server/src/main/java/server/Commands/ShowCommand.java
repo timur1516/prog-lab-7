@@ -3,7 +3,7 @@ package server.Commands;
 import common.Collection.Worker;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 
@@ -37,15 +37,15 @@ public class ShowCommand extends UserCommand {
      * @return
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         if(this.collectionController.getCollection().isEmpty()){
-            return new ExecuteCommandResponse(ResultState.SUCCESS,
+            return new ServerResponse(ResultState.SUCCESS,
                     "Collection is empty");
         }
         StringBuilder result = new StringBuilder();
         for(Worker worker : this.collectionController.getCollection().stream().sorted().toList()) {
             result.append(worker.toString()).append("\n");
         }
-        return new ExecuteCommandResponse(ResultState.SUCCESS, result.toString());
+        return new ServerResponse(ResultState.SUCCESS, result.toString());
     }
 }

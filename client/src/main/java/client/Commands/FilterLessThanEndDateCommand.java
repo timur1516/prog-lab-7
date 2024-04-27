@@ -3,7 +3,6 @@ package client.Commands;
 import client.Readers.WorkerReader;
 import client.UDPClient;
 import common.Constants;
-import common.Exceptions.WrongAmountOfArgumentsException;
 import common.Commands.UserCommand;
 import common.net.requests.*;
 
@@ -39,14 +38,14 @@ public class FilterLessThanEndDateCommand extends UserCommand {
      *
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         try {
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.IS_COLLECTION_EMPTY, null));
             if (((boolean)UDPClient.getInstance().receiveObject())) {
                 if (Constants.SCRIPT_MODE) {
                     workerReader.readEndDate();
                 }
-                return new ExecuteCommandResponse(ResultState.SUCCESS, "Collection is empty!");
+                return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
             }
 
             LocalDateTime endDate = workerReader.readEndDate();
@@ -55,9 +54,9 @@ public class FilterLessThanEndDateCommand extends UserCommand {
 
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
 
-            return (ExecuteCommandResponse) UDPClient.getInstance().receiveObject();
+            return (ServerResponse) UDPClient.getInstance().receiveObject();
         } catch (Exception e){
-            return new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+            return new ServerResponse(ResultState.EXCEPTION, e);
         }
     }
 }

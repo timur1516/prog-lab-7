@@ -1,10 +1,9 @@
 package server.Commands;
 
 import common.Collection.Worker;
-import common.Exceptions.InvalidDataException;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 
@@ -43,12 +42,12 @@ public class RemoveGreaterCommand extends UserCommand {
      * @return
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         if(this.collectionController.getCollection().isEmpty()){
-            return new ExecuteCommandResponse(ResultState.SUCCESS, "Collection is empty!");
+            return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
         int elementsRemoved = this.collectionController.removeGreater(worker);
-        return new ExecuteCommandResponse(ResultState.SUCCESS,
+        return new ServerResponse(ResultState.SUCCESS,
                 String.format("Successfully removed %d elements!", elementsRemoved));
     }
 

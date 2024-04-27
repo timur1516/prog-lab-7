@@ -3,7 +3,7 @@ package server.Commands;
 import server.Exceptions.ExitingException;
 import common.UI.YesNoQuestionAsker;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.PackedCommand;
 import common.net.requests.ResultState;
 import common.Controllers.CommandsController;
@@ -35,26 +35,26 @@ public class ExitCommand extends UserCommand {
      * <p>Finally server is stopped and app is closed
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         YesNoQuestionAsker questionAsker = new YesNoQuestionAsker("Do you want to exit?");
         if(questionAsker.ask()) {
             try {
                 UserCommand saveCommad = this.commandsController
                         .launchCommand(new PackedCommand("save", new ArrayList<>()));
-                ExecuteCommandResponse responce = saveCommad.execute();
+                ServerResponse responce = saveCommad.execute();
                 if(responce.state() == ResultState.EXCEPTION) throw (Exception) responce.data();
             } catch (Exception e) {
                 String message = "Collection wasn't saved!\n" +
                         e.getMessage() + "\n Exit canceled!";
-                return new ExecuteCommandResponse(ResultState.EXCEPTION, new ExitingException(message));
+                return new ServerResponse(ResultState.EXCEPTION, new ExitingException(message));
             }
             try {
                 Main.server.stop();
             } catch (IOException e) {
-                return new ExecuteCommandResponse(ResultState.EXCEPTION, new ExitingException("Could not stop server!"));
+                return new ServerResponse(ResultState.EXCEPTION, new ExitingException("Could not stop server!"));
             }
             System.exit(0);
         }
-        return new ExecuteCommandResponse(ResultState.SUCCESS, "Exit canceled");
+        return new ServerResponse(ResultState.SUCCESS, "Exit canceled");
     }
 }

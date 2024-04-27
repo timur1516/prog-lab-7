@@ -2,15 +2,13 @@ package server;
 
 import common.Commands.HelpCommand;
 import common.Constants;
-import common.Exceptions.ReceivingDataException;
-import common.Exceptions.SendingDataException;
-import common.FileLoader;
+import common.Exceptions.*;
 import common.UI.CommandReader;
+import common.UserInfo;
 import common.net.requests.ClientRequest;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.PackedCommand;
 import common.net.requests.ResultState;
-import common.Collection.*;
 import common.Commands.UserCommand;
 import common.UI.Console;
 import org.slf4j.Logger;
@@ -18,11 +16,14 @@ import org.slf4j.LoggerFactory;
 import server.Commands.*;
 import server.Controllers.CollectionController;
 import common.Controllers.CommandsController;
+import server.Controllers.DBController;
 import server.Controllers.DataFileController;
 
 import java.io.*;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.rmi.ServerError;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -79,7 +80,30 @@ public class Main {
             System.exit(0);
         }
 
-        collectionController = new CollectionController(loadData());
+        try {
+            DBController.getInstance().connect();
+            logger.info("Database have been connected successfully!");
+        } catch (SQLException e) {
+            logger.error("Error while connecting database!", e);
+            System.exit(0);
+        } catch (ClassNotFoundException e) {
+            logger.error("Database driver was not found!", e);
+            System.exit(0);
+        }
+
+        try {
+            DBQueries.initStatements();
+        } catch (SQLException e) {
+            logger.error("Error while preparing statements for database!", e);
+            System.exit(0);
+        }
+
+        collectionController = new CollectionController();
+        try {
+            collectionController.loadCollection();
+        } catch (SQLException e) {
+            logger.error("Error while loading collection from database!", e);
+        }
 
         clientCommandsController = new CommandsController();
         clientCommandsController.setCommandsList(
@@ -178,7 +202,7 @@ public class Main {
             Console.getInstance().printError(e.getMessage());
             return;
         }
-        ExecuteCommandResponse responce = command.execute();
+        ServerResponse responce = command.execute();
         switch (responce.state()) {
             case SUCCESS:
                 Console.getInstance().printLn(responce.data());
@@ -199,14 +223,14 @@ public class Main {
             case EXECUTE_COMMAND:
                 PackedCommand packedCommand = (PackedCommand) clientRequest.data();
                 logger.info("Request for executing command {}", packedCommand.commandName());
-                ExecuteCommandResponse executeCommandResponse = null;
+                ServerResponse serverResponse = null;
                 try {
                     UserCommand command = clientCommandsController.launchCommand(packedCommand);
-                    executeCommandResponse = command.execute();
+                    serverResponse = command.execute();
                 } catch (Exception e) {
-                    executeCommandResponse = new ExecuteCommandResponse(ResultState.EXCEPTION, e);
+                    serverResponse = new ServerResponse(ResultState.EXCEPTION, e);
                 } finally {
-                    server.sendObject(executeCommandResponse);
+                    server.sendObject(serverResponse);
                     logger.info("Command {} executed successfully", packedCommand.commandName());
                 }
                 break;
@@ -221,59 +245,46 @@ public class Main {
                 server.sendObject(collectionController.getCollection().isEmpty());
                 logger.info("Request handled successfully");
                 break;
+            case SIGN_IN:
+                UserInfo newUser = (UserInfo) clientRequest.data();
+                logger.info("Reques for adding new user with username '{}'", newUser.userName());
+                try {
+                    AuthorizationController.addUser(newUser);
+                    server.sendObject(new ServerResponse(ResultState.SUCCESS, null));
+                    logger.info("User '{}' added successfully", newUser.userName());
+                } catch (SQLException e) {
+                    logger.error("Database error occurred!", e);
+                }
+                break;
+            case LOG_IN:
+                UserInfo userInfo = (UserInfo) clientRequest.data();
+                logger.info("Login request from user '{}' received", userInfo.userName());
+                try {
+                    AuthorizationController.logIn(userInfo);
+                    server.sendObject(new ServerResponse(ResultState.SUCCESS, null));
+                    logger.info("User '{}' logged in successfully", userInfo.userName());
+                } catch (SQLException e) {
+                    logger.error("Database error occurred!", e);
+                } catch (WrongPasswordException | UsernameNotFoundException e) {
+                    logger.info("Login for user '{}' was not successful", userInfo.userName());
+                    server.sendObject(new ServerResponse(ResultState.EXCEPTION, e));
+                }
+                break;
+            case CHECK_USERNAME:
+                String userName = (String) clientRequest.data();
+                logger.info("Request for checking username '{}' received", userName);
+                try {
+                    if(AuthorizationController.checkUsername(userName)){
+                        server.sendObject(new ServerResponse(ResultState.EXCEPTION,
+                                new UsernameAlreadyExistsException(userName)));
+                    }
+                    else {
+                        server.sendObject(new ServerResponse(ResultState.SUCCESS, null));
+                    }
+                } catch (SQLException e) {
+                    logger.error("Database error occurred!", e);
+                }
+                break;
         }
-    }
-
-    /**
-     * Method to read name of environmental variable from console
-     * <p>If variable if is not valid it prints an error message and stops program
-     * @return String path to data file
-     */
-    private static String readFileName(){
-        Console.getInstance().print("Enter environmental variable name: ");
-        String envName = Console.getInstance().readLine().trim();
-        String dataFilePath = System.getenv(envName);
-        if(dataFilePath == null){
-            logger.error("Environmental variable is not defined!");
-            System.exit(0);
-        }
-        return dataFilePath;
-    }
-
-    /**
-     * Method to load collection from data file.
-     * <p>Method also completes validation of filePath and collection inside dataFile
-     * @return Collection of workers
-     * @see DataFileController
-     * @see CollectionController
-     */
-    private static PriorityQueue<Worker> loadData(){
-        String dataFilePath = readFileName();
-
-        PriorityQueue<Worker> data = null;
-        File dataFile = null;
-
-        try {
-            dataFile = new FileLoader().loadFile(dataFilePath, "json", "rw", "data file");
-        } catch (FileNotFoundException e) {
-            Console.getInstance().printError(e.getMessage());
-            System.exit(0);
-        }
-
-        dataFileController = new DataFileController(dataFile);
-
-        try {
-            data = dataFileController.readJSON();
-        } catch (Exception e) {
-            logger.error("Data file reading error!", e);
-            System.exit(0);
-        }
-        if(data == null) data = new PriorityQueue<>();
-        if(!CollectionController.isValid(data)){
-            logger.error("Data file is not valid!");
-            System.exit(0);
-        }
-        logger.info("Data was loaded successfully!");
-        return data;
     }
 }

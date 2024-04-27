@@ -2,7 +2,7 @@ package client.Commands;
 
 import common.UI.YesNoQuestionAsker;
 import common.Commands.UserCommand;
-import common.net.requests.ExecuteCommandResponse;
+import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 
 /**
@@ -24,11 +24,11 @@ public class ExitCommand extends UserCommand {
      * <p>Firstly user is asked if he really wants to exit
      */
     @Override
-    public ExecuteCommandResponse execute() {
+    public ServerResponse execute() {
         YesNoQuestionAsker questionAsker = new YesNoQuestionAsker("Do you want to exit?");
         if(questionAsker.ask()) {
             System.exit(0);
         }
-        return new ExecuteCommandResponse(ResultState.SUCCESS, "Exit canceled");
+        return new ServerResponse(ResultState.SUCCESS, "Exit canceled");
     }
 }
