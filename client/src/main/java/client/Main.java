@@ -16,6 +16,7 @@ import common.UI.CommandReader;
 import common.UI.Console;
 import common.Commands.UserCommand;
 import common.UserInfo;
+import common.net.requests.ClientRequest;
 import common.net.requests.ServerResponse;
 import common.net.requests.PackedCommand;
 
@@ -62,6 +63,8 @@ public class Main {
         
         Console.getInstance().printLn(String.format("Hello %s!", user.userName()));
 
+        ClientRequest.setUser(user);
+
         commandsController = new CommandsController();
         commandsController.setCommandsList(
                 new ArrayList<>(Arrays.asList(
@@ -95,13 +98,13 @@ public class Main {
             Console.getInstance().printLn(packedCommand.commandName());
 
             UserCommand command = commandsController.launchCommand(packedCommand);
-            ServerResponse responce = command.execute();
-            switch (responce.state()){
+            ServerResponse response = command.execute();
+            switch (response.state()){
                 case SUCCESS:
-                    Console.getInstance().printLn(responce.data());
+                    Console.getInstance().printLn(response.data());
                     break;
                 case EXCEPTION:
-                    throw (Exception) responce.data();
+                    throw (Exception) response.data();
             }
         }
     }
@@ -124,13 +127,13 @@ public class Main {
                 Console.getInstance().printError(e.getMessage());
                 continue;
             }
-            ServerResponse responce = command.execute();
-            switch (responce.state()){
+            ServerResponse response = command.execute();
+            switch (response.state()){
                 case SUCCESS:
-                    Console.getInstance().printLn(responce.data());
+                    Console.getInstance().printLn(response.data());
                     break;
                 case EXCEPTION:
-                    Console.getInstance().printError(((Exception) responce.data()).getMessage());
+                    Console.getInstance().printError(((Exception) response.data()).getMessage());
             }
         }
     }

@@ -2,6 +2,8 @@ package common.Commands;
 
 import common.net.requests.ServerResponse;
 
+import java.sql.SQLException;
+
 /**
  * Interface of all commands
  */

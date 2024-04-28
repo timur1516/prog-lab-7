@@ -5,10 +5,7 @@ import common.Constants;
 import common.Exceptions.*;
 import common.UI.CommandReader;
 import common.UserInfo;
-import common.net.requests.ClientRequest;
-import common.net.requests.ServerResponse;
-import common.net.requests.PackedCommand;
-import common.net.requests.ResultState;
+import common.net.requests.*;
 import common.Commands.UserCommand;
 import common.UI.Console;
 import org.slf4j.Logger;
@@ -22,8 +19,7 @@ import server.Controllers.DataFileController;
 import java.io.*;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.rmi.ServerError;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -91,12 +87,12 @@ public class Main {
             System.exit(0);
         }
 
-        try {
-            DBQueries.initStatements();
-        } catch (SQLException e) {
-            logger.error("Error while preparing statements for database!", e);
-            System.exit(0);
-        }
+//        try {
+//            DBQueries.initStatements();
+//        } catch (SQLException e) {
+//            logger.error("Error while preparing statements for database!", e);
+//            System.exit(0);
+//        }
 
         collectionController = new CollectionController();
         try {
@@ -130,6 +126,44 @@ public class Main {
                         new HelpCommand(serverCommandsController)
                 ))
         );
+
+//        try {
+//
+////            PreparedStatement test = DBQueries.WORKER_INSERT();
+////
+////            test.setString(1, "popa");
+////            test.setDouble(2, 6);
+////            test.setInt(3, 15);
+////            test.setTimestamp(4, Timestamp.valueOf("2024-04-28 12:00:00"));
+////            test.setTimestamp(5, Timestamp.valueOf("2024-04-28 12:00:00"));
+////            test.setString(6, "FIRED");
+////            test.setInt(7, 5);
+////            test.setInt(8, 1);
+////
+////
+////            test.execute();
+////            test.close();
+//
+//            PreparedStatement add_command_qury = DBQueries.ADD_COMMAND();
+//
+//
+//            add_command_qury.setString(1, "polh");
+//            add_command_qury.setDouble(2, 15);
+//            add_command_qury.setDouble(3, 15);
+//            add_command_qury.setInt(4, 15);
+//            add_command_qury.setTimestamp(5, Timestamp.valueOf("2024-04-28 12:00:00"));
+//            add_command_qury.setTimestamp(6, Timestamp.valueOf("2024-04-28 12:00:00"));
+//            add_command_qury.setString(7, "FIRED");
+//            add_command_qury.setInt(8, 100);
+//            add_command_qury.setString(9, "RED");
+//            add_command_qury.setString(10, "USA");
+//            add_command_qury.setString(11, "po");
+//
+//            add_command_qury.execute();
+//            add_command_qury.close();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
         interactiveMode();
     }
 
@@ -219,7 +253,20 @@ public class Main {
      * @throws IOException If any I\O error occurred while sending answer to client
      */
     private static void handleClientRequest(ClientRequest clientRequest) throws SendingDataException {
-        switch (clientRequest.type()) {
+        if(clientRequest.getRequestType() != ClientRequestType.LOG_IN &&
+           clientRequest.getRequestType() != ClientRequestType.CHECK_USERNAME &&
+           clientRequest.getRequestType() != ClientRequestType.SIGN_IN){
+           try {
+               AuthorizationController.logIn(clientRequest.user());
+           } catch (UsernameNotFoundException | WrongPasswordException e) {
+               logger.warn("Someone used username '{}' and password '{}' in order to execute query!", clientRequest.user().userName(), clientRequest.user().password());
+               return;
+           } catch (SQLException e) {
+               logger.error("Database error occurred!", e);
+               return;
+           }
+        }
+        switch (clientRequest.getRequestType()) {
             case EXECUTE_COMMAND:
                 PackedCommand packedCommand = (PackedCommand) clientRequest.data();
                 logger.info("Request for executing command {}", packedCommand.commandName());

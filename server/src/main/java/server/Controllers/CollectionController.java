@@ -3,13 +3,14 @@ package server.Controllers;
 import common.Collection.*;
 import common.Constants;
 import common.Exceptions.InvalidDataException;
+import common.UI.Console;
+import common.UserInfo;
 import common.Validators.WorkerValidators;
+import server.Commands.AddCommand;
 import server.DBQueries;
 import server.Main;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
@@ -138,13 +139,40 @@ public class CollectionController {
      *
      * @param newWorker Object to add
      */
-    public void add(Worker newWorker){
-        newWorker.setId(this.generateId());
-        newWorker.setCreationDate(ZonedDateTime.now());
+    public void add(Worker newWorker, String username) throws SQLException {
+        String name = newWorker.getName();
+        double x = newWorker.getCoordinates().getX();
+        double y = newWorker.getCoordinates().getY();
+        Integer salary = newWorker.getSalary();
+        Timestamp startDate = Timestamp.valueOf(newWorker.getStartDate());
+        Timestamp endDate = newWorker.getEndDate() == null ? null : Timestamp.valueOf(newWorker.getEndDate());
+        String status = String.valueOf(newWorker.getStatus());
+        Long height = null;
+        String eyeColor = null;
+        String nationality = null;
+        if(newWorker.getPerson() != null) {
+            height = newWorker.getPerson().getHeight();
+            eyeColor = newWorker.getPerson().getEyeColor() == null ? null : String.valueOf(newWorker.getPerson().getEyeColor());
+            nationality = newWorker.getPerson().getNationality() == null ? null : String.valueOf(newWorker.getPerson().getNationality());
+        }
 
-        this.collection.add(newWorker);
+        PreparedStatement add_command_qury = DBQueries.ADD_COMMAND();
 
-        this.changeFlag = true;
+        add_command_qury.setString(1, name);
+        add_command_qury.setDouble(2, x);
+        add_command_qury.setDouble(3, y);
+        add_command_qury.setInt(4, salary);
+        add_command_qury.setTimestamp(5, startDate);
+        add_command_qury.setTimestamp(6, endDate);
+        add_command_qury.setString(7, status);
+        add_command_qury.setObject(8, height, Types.INTEGER);
+        add_command_qury.setString(9, eyeColor);
+        add_command_qury.setString(10, nationality);
+        add_command_qury.setString(11, username);
+
+        add_command_qury.execute();
+        add_command_qury.close();
+        loadCollection();
     }
 
     /**
@@ -260,7 +288,8 @@ public class CollectionController {
      * @throws SQLException
      */
     public void loadCollection() throws SQLException {
-        ResultSet resultSet = DBQueries.GET_COLLECTION.executeQuery();
+        PreparedStatement get_collection_query = DBQueries.GET_COLLECTION();
+        ResultSet resultSet = get_collection_query.executeQuery();
 
         PriorityQueue<Worker> data = new PriorityQueue<>();
 
@@ -284,7 +313,7 @@ public class CollectionController {
             data.add(worker);
         }
         resultSet.close();
-        DBQueries.GET_COLLECTION.close();
+        get_collection_query.close();
 
         if(isValid(data)) {
             collection = data;

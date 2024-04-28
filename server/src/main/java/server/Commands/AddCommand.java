@@ -8,6 +8,7 @@ import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +27,8 @@ public class AddCommand extends UserCommand {
      */
     private Worker worker;
 
+    private String username;
+
     /**
      * AddCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
@@ -39,6 +42,7 @@ public class AddCommand extends UserCommand {
     @Override
     public void initCommandArgs(ArrayList<Serializable> arguments) {
         this.worker = (Worker) arguments.get(0);
+        this.username = (String) arguments.get(1);
     }
 
     /**
@@ -49,7 +53,11 @@ public class AddCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        collectionController.add(worker);
+        try {
+            collectionController.add(worker, username);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return new ServerResponse(ResultState.SUCCESS, "Worker added successfully!");
     }
 }

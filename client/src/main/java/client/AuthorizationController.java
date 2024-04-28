@@ -36,7 +36,6 @@ public class AuthorizationController {
                 Console.getInstance().printError(e.getMessage());
             }
         }
-
     }
     private static void handleAuthorizationResult() throws ReceivingDataException, AuthorizationException {
         ServerResponse response = (ServerResponse) UDPClient.getInstance().receiveObject();

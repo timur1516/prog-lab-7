@@ -1,9 +1,11 @@
 package client.Commands;
 
+import client.Main;
 import client.Readers.WorkerReader;
 import client.UDPClient;
 import common.Collection.Worker;
 import common.Commands.UserCommand;
+import common.UI.Console;
 import common.net.requests.*;
 
 import java.io.Serializable;
@@ -41,6 +43,7 @@ public class AddCommand extends UserCommand {
             Worker worker = this.workerReader.readWorker();
             ArrayList<Serializable> arguments = new ArrayList<>();
             arguments.add(worker);
+            arguments.add(ClientRequest.getUser().userName());
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
             return (ServerResponse) UDPClient.getInstance().receiveObject();
         }
