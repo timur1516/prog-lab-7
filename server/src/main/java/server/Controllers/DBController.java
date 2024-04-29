@@ -1,5 +1,7 @@
 package server.Controllers;
 
+import server.Main;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -28,5 +30,6 @@ public class DBController {
     }
     public void close() throws SQLException {
         this.connection.close();
+        Main.logger.info("Database was disconnected");
     }
 }

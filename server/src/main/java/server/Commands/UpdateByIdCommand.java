@@ -3,11 +3,14 @@ package server.Commands;
 import common.Collection.Worker;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
+import common.Exceptions.ServerErrorException;
 import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
+import server.Main;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
@@ -27,6 +30,7 @@ public class UpdateByIdCommand extends UserCommand {
      */
     private long id;
     Worker worker;
+    String username;
 
     /**
      * UpdateByIdCommand constructor
@@ -36,7 +40,7 @@ public class UpdateByIdCommand extends UserCommand {
     public UpdateByIdCommand(CollectionController collectionController) {
         super("update",
                 "update value of collection element which id is equal to given",
-                "id", "{element}");
+                "id", "element", "username");
         this.collectionController = collectionController;
     }
 
@@ -53,7 +57,12 @@ public class UpdateByIdCommand extends UserCommand {
             return new ServerResponse(ResultState.EXCEPTION,
                     new NoSuchElementException("No element with such id!"));
         }
-        this.collectionController.update(id, worker);
+        try {
+            this.collectionController.update(id, worker, username);
+        } catch (SQLException e) {
+            Main.logger.error("Database error occurred!", e);
+            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+        }
         return new ServerResponse(ResultState.SUCCESS,
                 "Element updated successfully!");
     }
@@ -62,5 +71,6 @@ public class UpdateByIdCommand extends UserCommand {
     public void initCommandArgs(ArrayList<Serializable> arguments) {
         this.id = (long) arguments.get(0);
         this.worker = (Worker) arguments.get(1);
+        this.username = (String) arguments.get(2);
     }
 }

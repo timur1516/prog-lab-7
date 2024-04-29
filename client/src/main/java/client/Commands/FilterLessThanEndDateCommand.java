@@ -27,7 +27,7 @@ public class FilterLessThanEndDateCommand extends UserCommand {
      * @param workerReader
      */
     public FilterLessThanEndDateCommand(WorkerReader workerReader) {
-        super("filter_less_than_end_date", "print all elements whose endDate is less than given","endDate");
+        super("filter_less_than_end_date", "print all elements whose endDate is less than given","{endDate}");
         this.workerReader = workerReader;
     }
 

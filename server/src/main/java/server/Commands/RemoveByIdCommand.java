@@ -3,11 +3,14 @@ package server.Commands;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
 import common.Exceptions.InvalidDataException;
+import common.Exceptions.ServerErrorException;
 import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
+import server.Main;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
@@ -28,13 +31,15 @@ public class RemoveByIdCommand extends UserCommand {
      */
     private long id;
 
+    String username;
+
     /**
      * RemoveByIdCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
      * @param collectionController
      */
     public RemoveByIdCommand(CollectionController collectionController) {
-        super("remove_by_id", "remove element with given id from collection", "id");
+        super("remove_by_id", "remove element with given id from collection", "id", "username");
         this.collectionController = collectionController;
         this.id = id;
     }
@@ -52,7 +57,12 @@ public class RemoveByIdCommand extends UserCommand {
             return new ServerResponse(ResultState.EXCEPTION,
                     new NoSuchElementException("No element with such id!"));
         }
-        this.collectionController.removeById(id);
+        try {
+            this.collectionController.removeById(id, username);
+        } catch (SQLException e) {
+            Main.logger.error("Database error occurred!", e);
+            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+        }
         return new ServerResponse(ResultState.SUCCESS, "Element removed successfully!");
     }
 
@@ -60,5 +70,6 @@ public class RemoveByIdCommand extends UserCommand {
     public void initCommandArgs(ArrayList<Serializable> arguments) throws InvalidDataException {
         super.initCommandArgs(arguments);
         this.id = (long) arguments.get(0);
+        this.username = (String) arguments.get(1);
     }
 }

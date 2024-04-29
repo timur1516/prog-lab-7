@@ -2,14 +2,18 @@ package server.Commands;
 
 
 import common.Collection.Worker;
+import common.Exceptions.InvalidDataException;
+import common.Exceptions.ServerErrorException;
 import common.Exceptions.WrongAmountOfArgumentsException;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
 import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
+import server.Main;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -24,17 +28,16 @@ public class RemoveLowerCommand extends UserCommand {
      */
     private CollectionController collectionController;
 
+    private Worker worker;
+    private String username;
+
     /**
      * RemoveLowerCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param workerReader
      * @param collectionController
      */
-
-    private Worker worker;
-
     public RemoveLowerCommand(CollectionController collectionController) {
-        super("remove_lower", "remove all elements which are lower than given", "{element}");
+        super("remove_lower", "remove all elements which are lower than given", "element", "username");
         this.collectionController = collectionController;
     }
 
@@ -51,7 +54,13 @@ public class RemoveLowerCommand extends UserCommand {
         if(this.collectionController.getCollection().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
-        int elementsRemoved = this.collectionController.removeLower(worker);
+        int elementsRemoved = 0;
+        try {
+            elementsRemoved = this.collectionController.removeLower(worker, username);
+        } catch (SQLException e) {
+            Main.logger.error("Database error occurred!", e);
+            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+        }
         return new ServerResponse(ResultState.SUCCESS,
                 String.format("Successfully removed %d elements!", elementsRemoved));
     }
@@ -63,7 +72,9 @@ public class RemoveLowerCommand extends UserCommand {
      * @throws WrongAmountOfArgumentsException If number of arguments is not equal to zero
      */
     @Override
-    public void initCommandArgs(ArrayList<Serializable> arguments) {
+    public void initCommandArgs(ArrayList<Serializable> arguments) throws InvalidDataException {
+        super.initCommandArgs(arguments);
         this.worker = (Worker) arguments.get(0);
+        this.username = (String) arguments.get(1);
     }
 }

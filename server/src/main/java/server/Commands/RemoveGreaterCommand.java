@@ -3,11 +3,16 @@ package server.Commands;
 import common.Collection.Worker;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
+import common.Exceptions.InvalidDataException;
+import common.Exceptions.ServerErrorException;
+import common.UI.Console;
 import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
+import server.Main;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -23,13 +28,15 @@ public class RemoveGreaterCommand extends UserCommand {
     private CollectionController collectionController;
 
     private Worker worker;
+    private String username;
+
     /**
      * RemoveGreaterCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
      * @param collectionController
      */
     public RemoveGreaterCommand(CollectionController collectionController) {
-        super("remove_greater", "remove all elements which are greater than given", "{element}");
+        super("remove_greater", "remove all elements which are greater than given", "element", "username");
         this.collectionController = collectionController;
     }
 
@@ -46,13 +53,21 @@ public class RemoveGreaterCommand extends UserCommand {
         if(this.collectionController.getCollection().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
-        int elementsRemoved = this.collectionController.removeGreater(worker);
+        int elementsRemoved = 0;
+        try {
+            elementsRemoved = this.collectionController.removeGreater(worker, username);
+        } catch (SQLException e) {
+            Main.logger.error("Database error occurred!", e);
+            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+        }
         return new ServerResponse(ResultState.SUCCESS,
                 String.format("Successfully removed %d elements!", elementsRemoved));
     }
 
     @Override
-    public void initCommandArgs(ArrayList<Serializable> arguments) {
+    public void initCommandArgs(ArrayList<Serializable> arguments) throws InvalidDataException {
+        super.initCommandArgs(arguments);
         this.worker = (Worker) arguments.get(0);
+        this.username = (String) arguments.get(1);
     }
 }

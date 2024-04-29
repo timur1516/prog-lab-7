@@ -63,6 +63,8 @@ public class UpdateByIdCommand extends UserCommand {
             ArrayList<Serializable> arguments = new ArrayList<>();
             arguments.add(id);
             arguments.add(worker);
+            arguments.add(ClientRequest.getUser().userName());
+
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
             return (ServerResponse) UDPClient.getInstance().receiveObject();
         } catch (Exception e){

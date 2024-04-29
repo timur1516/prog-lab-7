@@ -69,34 +69,6 @@ public class CollectionController {
     }
 
     /**
-     * Method to check if current collection isn't saved in data file
-     * @return boolean value
-     */
-    public boolean wasChanged(){
-        return this.changeFlag;
-    }
-
-    /**
-     * Method to set changeFlag to false value
-     */
-    public void removeChangeFlag(){
-        this.changeFlag = false;
-    }
-
-    /**
-     * Method to generate unique id for new element of collection
-     * <p>It gets the maximum id in current collection and then increments it
-     * @return id
-     */
-    public long generateId(){
-        if(this.collection.isEmpty()) return 1;
-        return this.collection
-                .stream()
-                .map(Worker::getId)
-                .max(Long::compareTo).get() + 1;
-    }
-
-    /**
      * Method to get the collection
      *
      * @return Collection of workers
@@ -134,12 +106,7 @@ public class CollectionController {
             "\nSize: " + this.collection.size();
     }
 
-    /**
-     * Add new object to collection
-     *
-     * @param newWorker Object to add
-     */
-    public void add(Worker newWorker, String username) throws SQLException {
+    private void loadWorkerToStatement(Worker newWorker, PreparedStatement statement) throws SQLException {
         String name = newWorker.getName();
         double x = newWorker.getCoordinates().getX();
         double y = newWorker.getCoordinates().getY();
@@ -156,22 +123,31 @@ public class CollectionController {
             nationality = newWorker.getPerson().getNationality() == null ? null : String.valueOf(newWorker.getPerson().getNationality());
         }
 
-        PreparedStatement add_command_qury = DBQueries.ADD_COMMAND();
+        statement.setString(1, name);
+        statement.setDouble(2, x);
+        statement.setDouble(3, y);
+        statement.setInt(4, salary);
+        statement.setTimestamp(5, startDate);
+        statement.setTimestamp(6, endDate);
+        statement.setString(7, status);
+        statement.setObject(8, height, Types.BIGINT);
+        statement.setString(9, eyeColor);
+        statement.setString(10, nationality);
+    }
 
-        add_command_qury.setString(1, name);
-        add_command_qury.setDouble(2, x);
-        add_command_qury.setDouble(3, y);
-        add_command_qury.setInt(4, salary);
-        add_command_qury.setTimestamp(5, startDate);
-        add_command_qury.setTimestamp(6, endDate);
-        add_command_qury.setString(7, status);
-        add_command_qury.setObject(8, height, Types.INTEGER);
-        add_command_qury.setString(9, eyeColor);
-        add_command_qury.setString(10, nationality);
-        add_command_qury.setString(11, username);
+    /**
+     * Add new object to collection
+     *
+     * @param newWorker Object to add
+     */
+    public void add(Worker newWorker, String username) throws SQLException {
+        PreparedStatement add_command_query = DBQueries.ADD_COMMAND();
 
-        add_command_qury.execute();
-        add_command_qury.close();
+        loadWorkerToStatement(newWorker, add_command_query);
+        add_command_query.setString(11, username);
+
+        add_command_query.execute();
+        add_command_query.close();
         loadCollection();
     }
 
@@ -181,11 +157,16 @@ public class CollectionController {
      * @param id Element's id
      * @param newWorker New value for the element
      */
-    public void update(long id, Worker newWorker){
-        removeById(id);
-        newWorker.setId(id);
-        newWorker.setCreationDate(ZonedDateTime.now());
-        collection.add(newWorker);
+    public void update(long id, Worker newWorker, String username) throws SQLException {
+        PreparedStatement update_command_query = DBQueries.UPDATE_COMMAND();
+
+        loadWorkerToStatement(newWorker, update_command_query);
+        update_command_query.setString(11, username);
+        update_command_query.setLong(12, id);
+
+        update_command_query.execute();
+        update_command_query.close();
+        loadCollection();
     }
 
     /**
@@ -193,27 +174,39 @@ public class CollectionController {
      *
      * @param id Element's id
      */
-    public void removeById(long id){
-        this.collection.removeIf(worker -> worker.getId() == id);
+    public void removeById(long id, String username) throws SQLException {
+        PreparedStatement remove_by_id_query = DBQueries.REMOVE_BY_ID_COMMAND();
 
-        this.changeFlag = true;
+        remove_by_id_query.setString(1, username);
+        remove_by_id_query.setLong(2, id);
+
+        remove_by_id_query.execute();
+        remove_by_id_query.close();
+        loadCollection();
     }
 
     /**
      * Clear collection
      */
-    public void clear(){
-        this.collection.clear();
-        this.changeFlag = true;
+    public void clear(String username) throws SQLException {
+        PreparedStatement clear_command_query = DBQueries.CLEAR_COMMAND();
+
+        clear_command_query.setString(1, username);
+
+        clear_command_query.execute();
+        clear_command_query.close();
+        loadCollection();
     }
 
     /**
      * Removes the first element in the collection
      */
-    public void removeFirst(){
-        this.collection.poll();
-
-        this.changeFlag = true;
+    public void removeFirst(String username) throws SQLException {
+        PreparedStatement remove_first_command_query = DBQueries.REMOVE_FIRST_COMMAND();
+        remove_first_command_query.setString(1, username);
+        remove_first_command_query.execute();
+        remove_first_command_query.close();
+        loadCollection();
     }
 
     /**
@@ -221,11 +214,15 @@ public class CollectionController {
      * @param worker Element to compare with
      * @return Number of deleted elements
      */
-    public int removeGreater(Worker worker){
+    public int removeGreater(Worker worker, String username) throws SQLException {
         int oldSize = this.collection.size();
-        this.collection.removeIf(worker1 -> worker1.compareTo(worker) > 0);
 
-        this.changeFlag = true;
+        PreparedStatement remove_greater_command_query = DBQueries.REMOVE_GREATER_COMMAND();
+        remove_greater_command_query.setString(1, username);
+        remove_greater_command_query.setString(2, worker.getName());
+        remove_greater_command_query.execute();
+        remove_greater_command_query.close();
+        loadCollection();
 
         return oldSize - this.collection.size();
     }
@@ -236,11 +233,15 @@ public class CollectionController {
      * @param worker Element to compare with
      * @return Number of deleted elements
      */
-    public int removeLower(Worker worker){
+    public int removeLower(Worker worker, String username) throws SQLException {
         int oldSize = this.collection.size();
-        this.collection.removeIf(worker1 -> worker1.compareTo(worker) < 0);
 
-        this.changeFlag = true;
+        PreparedStatement remove_lower_command_query = DBQueries.REMOVE_LOWER_COMMAND();
+        remove_lower_command_query.setString(1, username);
+        remove_lower_command_query.setString(2, worker.getName());
+        remove_lower_command_query.execute();
+        remove_lower_command_query.close();
+        loadCollection();
 
         return oldSize - this.collection.size();
     }

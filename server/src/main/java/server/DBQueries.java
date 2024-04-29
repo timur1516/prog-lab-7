@@ -38,6 +38,41 @@ public class DBQueries {
 
     public static PreparedStatement ADD_COMMAND() throws SQLException {
         return DBController.getInstance().getConnection().prepareCall(
-                "CALL add_worker(?::text, ?::real, ?::real, ?::integer, ?::timestamp, ?::timestamp, ?::status, ?::integer, ?::color, ?::country, ?::text)");
+                "CALL add_worker(?::text, ?::double precision, ?::double precision, ?::integer, ?::timestamp, ?::timestamp, ?::status, ?::bigint, ?::color, ?::country, ?::text)"
+        );
+    }
+
+    public static PreparedStatement REMOVE_BY_ID_COMMAND() throws SQLException {
+        return DBController.getInstance().getConnection().prepareCall(
+                "DELETE FROM Worker WHERE user_id IN (SELECT id FROM User_info WHERE username = ?) AND " +
+                        "id = ?"
+        );
+    }
+
+    public static PreparedStatement REMOVE_FIRST_COMMAND() throws SQLException {
+        return DBController.getInstance().getConnection().prepareCall(
+                "DELETE FROM Worker WHERE user_id IN (SELECT id FROM User_info WHERE username = ?) AND " +
+                        "Worker.id IN (SELECT Worker.id FROM Worker ORDER BY name LIMIT 1);"
+        );
+    }
+
+    public static PreparedStatement REMOVE_GREATER_COMMAND() throws SQLException {
+        return DBController.getInstance().getConnection().prepareCall(
+                "DELETE FROM Worker WHERE user_id IN (SELECT id FROM User_info WHERE username = ?) AND " +
+                        "name > ?"
+        );
+    }
+
+    public static PreparedStatement REMOVE_LOWER_COMMAND() throws SQLException {
+        return DBController.getInstance().getConnection().prepareCall(
+                "DELETE FROM Worker WHERE user_id IN (SELECT id FROM User_info WHERE username = ?) AND " +
+                        "name < ?"
+        );
+    }
+
+    public static PreparedStatement UPDATE_COMMAND() throws SQLException {
+        return DBController.getInstance().getConnection().prepareCall(
+                "CALL update_worker(?::text, ?::double precision, ?::double precision, ?::integer, ?::timestamp, ?::timestamp, ?::status, ?::bigint, ?::color, ?::country, ?::text, ?::integer)"
+        );
     }
 }

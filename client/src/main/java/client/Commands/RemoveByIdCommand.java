@@ -42,6 +42,7 @@ public class RemoveByIdCommand extends UserCommand {
         try {
             ArrayList<Serializable> arguments = new ArrayList<>();
             arguments.add(id);
+            arguments.add(ClientRequest.getUser().userName());
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND,
                     new PackedCommand(super.getName(), arguments)));
             return (ServerResponse) UDPClient.getInstance().receiveObject();

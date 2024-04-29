@@ -4,6 +4,7 @@ import client.UDPClient;
 import common.Commands.UserCommand;
 import common.net.requests.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +29,9 @@ public class RemoveFirstCommand extends UserCommand {
     @Override
     public ServerResponse execute() {
         try {
-            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), new ArrayList<>())));
+            ArrayList<Serializable> arguments = new ArrayList<>();
+            arguments.add(ClientRequest.getUser().userName());
+            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
             return (ServerResponse) UDPClient.getInstance().receiveObject();
         }
         catch (Exception e) {

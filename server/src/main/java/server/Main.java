@@ -87,13 +87,6 @@ public class Main {
             System.exit(0);
         }
 
-//        try {
-//            DBQueries.initStatements();
-//        } catch (SQLException e) {
-//            logger.error("Error while preparing statements for database!", e);
-//            System.exit(0);
-//        }
-
         collectionController = new CollectionController();
         try {
             collectionController.loadCollection();
@@ -121,49 +114,10 @@ public class Main {
         serverCommandsController = new CommandsController();
         serverCommandsController.setCommandsList(
                 new ArrayList<>(Arrays.asList(
-                        new SaveCommand(collectionController, dataFileController),
                         new ExitCommand(serverCommandsController),
                         new HelpCommand(serverCommandsController)
                 ))
         );
-
-//        try {
-//
-////            PreparedStatement test = DBQueries.WORKER_INSERT();
-////
-////            test.setString(1, "popa");
-////            test.setDouble(2, 6);
-////            test.setInt(3, 15);
-////            test.setTimestamp(4, Timestamp.valueOf("2024-04-28 12:00:00"));
-////            test.setTimestamp(5, Timestamp.valueOf("2024-04-28 12:00:00"));
-////            test.setString(6, "FIRED");
-////            test.setInt(7, 5);
-////            test.setInt(8, 1);
-////
-////
-////            test.execute();
-////            test.close();
-//
-//            PreparedStatement add_command_qury = DBQueries.ADD_COMMAND();
-//
-//
-//            add_command_qury.setString(1, "polh");
-//            add_command_qury.setDouble(2, 15);
-//            add_command_qury.setDouble(3, 15);
-//            add_command_qury.setInt(4, 15);
-//            add_command_qury.setTimestamp(5, Timestamp.valueOf("2024-04-28 12:00:00"));
-//            add_command_qury.setTimestamp(6, Timestamp.valueOf("2024-04-28 12:00:00"));
-//            add_command_qury.setString(7, "FIRED");
-//            add_command_qury.setInt(8, 100);
-//            add_command_qury.setString(9, "RED");
-//            add_command_qury.setString(10, "USA");
-//            add_command_qury.setString(11, "po");
-//
-//            add_command_qury.execute();
-//            add_command_qury.close();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
         interactiveMode();
     }
 
@@ -236,13 +190,13 @@ public class Main {
             Console.getInstance().printError(e.getMessage());
             return;
         }
-        ServerResponse responce = command.execute();
-        switch (responce.state()) {
+        ServerResponse response = command.execute();
+        switch (response.state()) {
             case SUCCESS:
-                Console.getInstance().printLn(responce.data());
+                Console.getInstance().printLn(response.data());
                 break;
             case EXCEPTION:
-                Console.getInstance().printError(((Exception) responce.data()).getMessage());
+                Console.getInstance().printError(((Exception) response.data()).getMessage());
         }
     }
 

@@ -3,9 +3,11 @@ package server.Commands;
 import common.Collection.Worker;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
+import common.Exceptions.ServerErrorException;
 import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
+import server.Main;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -35,7 +37,7 @@ public class AddCommand extends UserCommand {
      * @param collectionController
      */
     public AddCommand(CollectionController collectionController) {
-        super("add", "add new element to collection", "{element}");
+        super("add", "add new element to collection", "element", "username");
         this.collectionController = collectionController;
     }
 
@@ -56,7 +58,8 @@ public class AddCommand extends UserCommand {
         try {
             collectionController.add(worker, username);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            Main.logger.error("Database error occurred!", e);
+            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
         }
         return new ServerResponse(ResultState.SUCCESS, "Worker added successfully!");
     }

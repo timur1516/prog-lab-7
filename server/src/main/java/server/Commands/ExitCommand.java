@@ -1,5 +1,6 @@
 package server.Commands;
 
+import server.Controllers.DBController;
 import server.Exceptions.ExitingException;
 import common.UI.YesNoQuestionAsker;
 import common.Commands.UserCommand;
@@ -10,6 +11,7 @@ import common.Controllers.CommandsController;
 import server.Main;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +26,7 @@ public class ExitCommand extends UserCommand {
      * <p> Firstly it initializes super constructor by command name, arguments and description
      */
     public ExitCommand(CommandsController commandsController) {
-        super("exit", "stop program without saving collection");
+        super("exit", "stop server");
         this.commandsController = commandsController;
     }
 
@@ -39,18 +41,9 @@ public class ExitCommand extends UserCommand {
         YesNoQuestionAsker questionAsker = new YesNoQuestionAsker("Do you want to exit?");
         if(questionAsker.ask()) {
             try {
-                UserCommand saveCommad = this.commandsController
-                        .launchCommand(new PackedCommand("save", new ArrayList<>()));
-                ServerResponse responce = saveCommad.execute();
-                if(responce.state() == ResultState.EXCEPTION) throw (Exception) responce.data();
-            } catch (Exception e) {
-                String message = "Collection wasn't saved!\n" +
-                        e.getMessage() + "\n Exit canceled!";
-                return new ServerResponse(ResultState.EXCEPTION, new ExitingException(message));
-            }
-            try {
+                DBController.getInstance().close();
                 Main.server.stop();
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 return new ServerResponse(ResultState.EXCEPTION, new ExitingException("Could not stop server!"));
             }
             System.exit(0);

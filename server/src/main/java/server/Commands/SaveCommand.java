@@ -30,7 +30,7 @@ public class SaveCommand extends UserCommand {
      * @param dataFileController
      */
     public SaveCommand(CollectionController collectionController, DataFileController dataFileController) {
-        super("save", "save collection to data file");
+        super("save", "save collection to data file", "username");
         this.collectionController = collectionController;
         this.dataFileController = dataFileController;
     }
@@ -45,7 +45,6 @@ public class SaveCommand extends UserCommand {
     public ServerResponse execute() {
         try {
             this.dataFileController.writeToJSON(this.collectionController.getCollection());
-            this.collectionController.removeChangeFlag();
             return new ServerResponse(ResultState.SUCCESS,
                     "Collection saved successfully!");
         } catch (IOException e) {
