@@ -21,7 +21,7 @@ import common.net.requests.PackedCommand;
  */
 public class Main {
     private static final int TIMEOUT = 10000;
-    private static final int NUMBER_OF_THREADS = 10;
+    private static final int NUMBER_OF_THREADS = 100;
     public static void main(String[] args) {
         try {
             UDPClient.getInstance().init(InetAddress.getLocalHost(), Constants.serverPort, TIMEOUT);
@@ -46,7 +46,7 @@ public class Main {
             } catch (UnknownHostException | SocketException e) {
                 throw new RuntimeException(e);
             }
-            PackedCommand packedCommand = new PackedCommand("clear", new ArrayList<>(List.of(user.userName())));
+            PackedCommand packedCommand = new PackedCommand("show", new ArrayList<>());
             ClientRequest clientRequest = new ClientRequest(ClientRequestType.EXECUTE_COMMAND, packedCommand);
 
             Thread thread = new Thread(new TestClient(udpClient, 100, clientRequest));

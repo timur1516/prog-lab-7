@@ -23,10 +23,6 @@ import java.util.ArrayList;
  * @see ICommand
  */
 public class RemoveLowerCommand extends UserCommand {
-    /**
-     * Controller of collection which is used to remove elements
-     */
-    private CollectionController collectionController;
 
     private Worker worker;
     private String username;
@@ -34,11 +30,9 @@ public class RemoveLowerCommand extends UserCommand {
     /**
      * RemoveLowerCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public RemoveLowerCommand(CollectionController collectionController) {
+    public RemoveLowerCommand() {
         super("remove_lower", "remove all elements which are lower than given", "element", "username");
-        this.collectionController = collectionController;
     }
 
     /**
@@ -51,12 +45,12 @@ public class RemoveLowerCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(this.collectionController.getCollection().isEmpty()){
+        if(CollectionController.getInstance().getCollection().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
         int elementsRemoved = 0;
         try {
-            elementsRemoved = this.collectionController.removeLower(worker, username);
+            elementsRemoved = CollectionController.getInstance().removeLower(worker, username);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

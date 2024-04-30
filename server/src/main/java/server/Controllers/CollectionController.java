@@ -19,6 +19,15 @@ import java.util.stream.Collectors;
  *
  */
 public class CollectionController {
+    private static CollectionController COLLECTION_CONTROLLER = null;
+
+    public static synchronized CollectionController getInstance(){
+        if(COLLECTION_CONTROLLER == null){
+            COLLECTION_CONTROLLER = new CollectionController();
+        }
+        return COLLECTION_CONTROLLER;
+    }
+
     /**
      * Collection of workers, which we operate on
      */
@@ -37,7 +46,7 @@ public class CollectionController {
      * CollectionController constructor
      * <p>Completes initialization of collection, generate creationDate and set changeFlag to false
      */
-    public CollectionController() {
+    private CollectionController() {
         collection = new PriorityQueue<>();
         this.creationDate = LocalDateTime.now();
         this.changeFlag = false;

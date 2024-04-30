@@ -13,19 +13,13 @@ import server.Controllers.CollectionController;
  * @see ICommand
  */
 public class PrintFieldDescendingSalaryCommand extends UserCommand {
-    /**
-     * Controller of collection which is used to get sorted list of all salaries
-     */
-    private CollectionController collectionController;
 
     /**
      * PrintFieldDescendingSalaryCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public PrintFieldDescendingSalaryCommand(CollectionController collectionController) {
+    public PrintFieldDescendingSalaryCommand() {
         super("print_field_descending_salary", "print values of all salary fields in collection in descending order");
-        this.collectionController = collectionController;
     }
 
     /**
@@ -37,10 +31,10 @@ public class PrintFieldDescendingSalaryCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(this.collectionController.getCollection().isEmpty()){
+        if(CollectionController.getInstance().getCollection().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS,"Collection is empty!");
         }
         return new ServerResponse(ResultState.SUCCESS,
-                this.collectionController.getDescendingSalaries().toString());
+                CollectionController.getInstance().getDescendingSalaries().toString());
     }
 }

@@ -17,20 +17,13 @@ import java.util.ArrayList;
  * @see ICommand
  */
 public class FilterLessThanEndDateCommand extends UserCommand {
-    /**
-     * Controller of collection which is used to get list of filtered elements
-     */
-    private CollectionController collectionController;
-
     private LocalDateTime endDate;
     /**
      * FilterLessThanEndDateCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public FilterLessThanEndDateCommand(CollectionController collectionController) {
+    public FilterLessThanEndDateCommand() {
         super("filter_less_than_end_date", "print all elements whose endDate is less than given", "endDate");
-        this.collectionController = collectionController;
     }
 
     /**
@@ -42,11 +35,11 @@ public class FilterLessThanEndDateCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(this.collectionController.getCollection().isEmpty()){
+        if(CollectionController.getInstance().getCollection().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
         return new ServerResponse(ResultState.SUCCESS,
-                this.collectionController.getLessThanEndDate(endDate).toString());
+                CollectionController.getInstance().getLessThanEndDate(endDate).toString());
     }
 
     @Override

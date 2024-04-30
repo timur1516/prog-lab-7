@@ -20,14 +20,12 @@ import java.util.ArrayList;
  * @see UserCommand
  */
 public class ExitCommand extends UserCommand {
-    private CommandsController commandsController;
     /**
      * ExitCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
      */
-    public ExitCommand(CommandsController commandsController) {
+    public ExitCommand() {
         super("exit", "stop server");
-        this.commandsController = commandsController;
     }
 
     /**

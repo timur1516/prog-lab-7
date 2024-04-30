@@ -22,26 +22,20 @@ import java.util.NoSuchElementException;
  */
 public class UpdateByIdCommand extends UserCommand {
     /**
-     * Controller of collection which is used to update element
-     */
-    private CollectionController collectionController;
-    /**
      * id of element to update
      */
     private long id;
-    Worker worker;
-    String username;
+    private Worker worker;
+    private String username;
 
     /**
      * UpdateByIdCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public UpdateByIdCommand(CollectionController collectionController) {
+    public UpdateByIdCommand() {
         super("update",
                 "update value of collection element which id is equal to given",
                 "id", "element", "username");
-        this.collectionController = collectionController;
     }
 
     /**
@@ -53,12 +47,12 @@ public class UpdateByIdCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(!this.collectionController.containsId(id)){
+        if(!CollectionController.getInstance().containsId(id)){
             return new ServerResponse(ResultState.EXCEPTION,
                     new NoSuchElementException("No element with such id!"));
         }
         try {
-            this.collectionController.update(id, worker, username);
+            CollectionController.getInstance().update(id, worker, username);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

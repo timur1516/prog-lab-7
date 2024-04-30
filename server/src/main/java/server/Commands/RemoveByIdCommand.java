@@ -22,26 +22,18 @@ import java.util.NoSuchElementException;
  */
 public class RemoveByIdCommand extends UserCommand {
     /**
-     * Controller of collection which is used to remove element by its id
-     */
-    private CollectionController collectionController;
-
-    /**
      * id of element to remove
      */
     private long id;
 
-    String username;
+    private String username;
 
     /**
      * RemoveByIdCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public RemoveByIdCommand(CollectionController collectionController) {
+    public RemoveByIdCommand() {
         super("remove_by_id", "remove element with given id from collection", "id", "username");
-        this.collectionController = collectionController;
-        this.id = id;
     }
 
     /**
@@ -53,12 +45,12 @@ public class RemoveByIdCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(!collectionController.containsId(id)){
+        if(!CollectionController.getInstance().containsId(id)){
             return new ServerResponse(ResultState.EXCEPTION,
                     new NoSuchElementException("No element with such id!"));
         }
         try {
-            this.collectionController.removeById(id, username);
+            CollectionController.getInstance().removeById(id, username);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

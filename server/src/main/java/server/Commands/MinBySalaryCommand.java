@@ -14,18 +14,11 @@ import server.Controllers.CollectionController;
  */
 public class MinBySalaryCommand extends UserCommand {
     /**
-     * Controller of collection which is used to get required element
-     */
-    private CollectionController collectionController;
-
-    /**
      * MinBySalaryCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public MinBySalaryCommand(CollectionController collectionController) {
+    public MinBySalaryCommand() {
         super("min_by_salary", "print any element from collection which salary field is minimal");
-        this.collectionController = collectionController;
     }
 
     /**
@@ -37,10 +30,10 @@ public class MinBySalaryCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(this.collectionController.getCollection().isEmpty()){
+        if(CollectionController.getInstance().getCollection().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS,"Collection is empty!");
         }
         return new ServerResponse(ResultState.SUCCESS,
-                this.collectionController.getMinBySalary().toString());
+                CollectionController.getInstance().getMinBySalary().toString());
     }
 }

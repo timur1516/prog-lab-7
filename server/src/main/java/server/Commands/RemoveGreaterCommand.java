@@ -21,22 +21,15 @@ import java.util.ArrayList;
  * @see ICommand
  */
 public class RemoveGreaterCommand extends UserCommand {
-    /**
-     * Controller of collection which is used to remove elements
-     */
-    private CollectionController collectionController;
-
     private Worker worker;
     private String username;
 
     /**
      * RemoveGreaterCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public RemoveGreaterCommand(CollectionController collectionController) {
+    public RemoveGreaterCommand() {
         super("remove_greater", "remove all elements which are greater than given", "element", "username");
-        this.collectionController = collectionController;
     }
 
     /**
@@ -49,12 +42,12 @@ public class RemoveGreaterCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(this.collectionController.getCollection().isEmpty()){
+        if(CollectionController.getInstance().getCollection().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
         int elementsRemoved = 0;
         try {
-            elementsRemoved = this.collectionController.removeGreater(worker, username);
+            elementsRemoved = CollectionController.getInstance().removeGreater(worker, username);
         } catch (SQLException e) {
             throw  new RuntimeException(e);
         }

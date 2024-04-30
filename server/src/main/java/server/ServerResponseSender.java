@@ -1,35 +1,58 @@
 package server;
 
 import common.Exceptions.SendingDataException;
-import common.net.requests.ServerResponse;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 import java.util.concurrent.BlockingQueue;
 
+import static common.net.NetDataTransferringHandler.PACKET_SIZE;
+
 public class ServerResponseSender implements Runnable{
-    private final UDPServer server;
     BlockingQueue<SendingTask> sendingTasks;
 
-    public ServerResponseSender(UDPServer server, BlockingQueue<SendingTask> sendingTasks){
-        this.server = server;
+    public ServerResponseSender(BlockingQueue<SendingTask> sendingTasks){
         this.sendingTasks = sendingTasks;
     }
 
     @Override
     public void run() {
-        while (true){
+        while (!Thread.currentThread().isInterrupted()){
             SendingTask task = null;
             try {
                 task = sendingTasks.take();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            if(task == null) continue;
             if(task.response() == null) continue;
             try {
-                server.sendObject(task.response(), task.address());
-            } catch (SendingDataException e) {
+                DatagramChannel channel = DatagramChannel.open();
+                channel.connect(task.address());
+                ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
+                buf.put(serialize(task.response()));
+                buf.flip();
+                channel.write(buf);
+            } catch ( IOException e) {
                 ServerLogger.getInstace().error("Could not send data to client!", e);
             }
         }
+    }
+    /**
+     * Method to serialize object
+     * <p>Object must be {@link Serializable}
+     * @param o Object to send
+     * @return byte array
+     * @throws IOException If any I\O error occurred while serializing
+     */
+    private byte[] serialize(Serializable o) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(o);
+        oos.flush();
+        return baos.toByteArray();
     }
 }

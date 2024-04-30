@@ -20,21 +20,14 @@ import java.util.ArrayList;
  * @see ICommand
  */
 public class ClearCommand extends UserCommand {
-    /**
-     * Controller of collection which is used to clear it
-     */
-    private CollectionController collectionController;
-
     private String username;
 
     /**
      * ClearCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public ClearCommand(CollectionController collectionController) {
+    public ClearCommand() {
         super("clear", "delete all element from collection", "username");
-        this.collectionController = collectionController;
     }
 
     @Override
@@ -52,7 +45,7 @@ public class ClearCommand extends UserCommand {
     @Override
     public ServerResponse execute() {
         try {
-            this.collectionController.clear(username);
+            CollectionController.getInstance().clear(username);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

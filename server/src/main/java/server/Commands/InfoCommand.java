@@ -14,18 +14,11 @@ import server.Controllers.CollectionController;
  */
 public class InfoCommand extends UserCommand {
     /**
-     * Controller of collection which is used get information about collection
-     */
-    private CollectionController collectionController;
-
-    /**
      * InfoCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public InfoCommand(CollectionController collectionController) {
+    public InfoCommand() {
         super("info", "print information about collection");
-        this.collectionController = collectionController;
     }
 
     /**
@@ -37,6 +30,6 @@ public class InfoCommand extends UserCommand {
     @Override
     public ServerResponse execute() {
         return new ServerResponse(ResultState.SUCCESS,
-                this.collectionController.getInfo());
+                CollectionController.getInstance().getInfo());
     }
 }

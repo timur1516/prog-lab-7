@@ -13,7 +13,7 @@ import java.nio.channels.Selector;
  * Class to run UDP server
  * <p>Uses {@link DatagramChannel} in non-blocking mode
  */
-public class UDPServer extends NetDataTransferringHandler {
+public class UDPServer extends NetDataTransferringHandler{
     /**
      * Datagram channel to communicate with clients
      */
@@ -22,21 +22,16 @@ public class UDPServer extends NetDataTransferringHandler {
      * Socket address with server port
      * <p>After receiving first request it contains address of client
      */
-    SocketAddress addr;
+    SocketAddress SERVER_ADRESS;
 
     UDPServer(int serverPort) {
-        addr = new InetSocketAddress(serverPort);
+        SERVER_ADRESS = new InetSocketAddress(serverPort);
     }
 
-    /**
-     * Method to open server channel
-     * <p>It also configure channel to non-blocking mode
-     * @throws IOException If any I\O error occurred
-     */
     @Override
     public void open() throws IOException {
         this.dc = DatagramChannel.open();
-        this.dc.bind(addr);
+        this.dc.bind(SERVER_ADRESS);
         this.dc.configureBlocking(false);
     }
 
@@ -63,25 +58,20 @@ public class UDPServer extends NetDataTransferringHandler {
     @Override
     protected byte[] receive() throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
-        addr = this.dc.receive(buf);
-        if(addr == null) return null;
+        SERVER_ADRESS = this.dc.receive(buf);
+        if(SERVER_ADRESS == null) return null;
         return buf.array();
     }
 
     @Override
     protected void send(byte[] arr) throws IOException {
-         send(arr, this.addr);
-    }
-
-    @Override
-    protected void send(byte[] arr, SocketAddress addr) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
         buf.put(arr);
         buf.flip();
-        this.dc.send(buf, addr);
+        this.dc.send(buf, SERVER_ADRESS);
     }
 
     public SocketAddress getAddr(){
-        return this.addr;
+        return this.SERVER_ADRESS;
     }
 }

@@ -9,23 +9,41 @@ import server.Controllers.CollectionController;
 
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
-public class ClientRequestHandler implements Callable<ServerResponse> {
-    ClientRequest clientRequest;
-    CollectionController collectionController;
+public class ClientRequestHandlerTask implements Runnable {
     CommandsController clientCommandsController;
-    UDPServer server;
+    private final BlockingQueue<HandlingTask> handlingTasks;
+    private final BlockingQueue<SendingTask> sendingTasks;
 
-    public ClientRequestHandler(UDPServer server, ClientRequest clientRequest, CommandsController clientCommandsController, CollectionController collectionController){
-        this.server = server;
-        this.clientRequest = clientRequest;
+    public ClientRequestHandlerTask(CommandsController clientCommandsController, BlockingQueue<HandlingTask> handlingTasks, BlockingQueue<SendingTask> sendingTasks){
         this.clientCommandsController = clientCommandsController;
-        this.collectionController = collectionController;
+        this.handlingTasks = handlingTasks;
+        this.sendingTasks = sendingTasks;
     }
 
     @Override
-    public ServerResponse call() throws SQLException {
+    public void run() {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                HandlingTask task = this.handlingTasks.take();
+                ServerResponse response;
+                try {
+                    response = handleClientRequest(task.clientRequest());
+                } catch (SQLException e) {
+                    ServerLogger.getInstace().error("Database error occurred", e);
+                    response = new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+                }
+                this.sendingTasks.put(new SendingTask(response, task.address()));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private ServerResponse handleClientRequest(ClientRequest clientRequest) throws SQLException, InterruptedException {
+        Thread.sleep(500);
         if(clientRequest.getRequestType() != ClientRequestType.LOG_IN &&
                 clientRequest.getRequestType() != ClientRequestType.CHECK_USERNAME &&
                 clientRequest.getRequestType() != ClientRequestType.SIGN_IN){

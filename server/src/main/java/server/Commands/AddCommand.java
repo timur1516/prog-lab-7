@@ -22,10 +22,6 @@ import java.util.ArrayList;
  */
 public class AddCommand extends UserCommand {
     /**
-     * Controller of collection which is used to add new element
-     */
-    private CollectionController collectionController;
-    /**
      * Worker object to add
      */
     private Worker worker;
@@ -35,11 +31,9 @@ public class AddCommand extends UserCommand {
     /**
      * AddCommand constructor
      * <p> Firstly it initializes super constructor by command name, arguments and description
-     * @param collectionController
      */
-    public AddCommand(CollectionController collectionController) {
+    public AddCommand() {
         super("add", "add new element to collection", "element", "username");
-        this.collectionController = collectionController;
     }
 
     @Override
@@ -57,7 +51,7 @@ public class AddCommand extends UserCommand {
     @Override
     public ServerResponse execute() {
         try {
-            collectionController.add(worker, username);
+            CollectionController.getInstance().add(worker, username);
         } catch (SQLException e) {
             ServerLogger.getInstace().error("Database error occurred!", e);
             return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());

@@ -11,7 +11,7 @@ import java.net.SocketAddress;
  * <p>It has methods for serialization and deserialization of objects and methods to send and receive objects
  */
 public abstract class NetDataTransferringHandler {
-    protected static final int PACKET_SIZE = 32000;
+    public static final int PACKET_SIZE = 32000;
     /**
      * Method to init and start dataTransferring channel
      * @throws IOException If any error while opening occurred
@@ -66,8 +66,6 @@ public abstract class NetDataTransferringHandler {
      */
     protected abstract void send(byte[] arr) throws IOException;
 
-    protected void send(byte[] arr, SocketAddress address) throws IOException {};
-
     /**
      * Method to receive Serializable object
      * <p>Firstly it receives length of object and then object is read
@@ -81,8 +79,7 @@ public abstract class NetDataTransferringHandler {
             return deserialize(bytes);
         }
         catch (Exception e){
-            throw new RuntimeException(e);
-            //throw new ReceivingDataException("Error while receiving data!");
+            throw new ReceivingDataException("Error while receiving data!");
         }
     }
 
@@ -95,21 +92,6 @@ public abstract class NetDataTransferringHandler {
         try {
             byte arr[] = serialize(o);
             send(arr);
-        }
-        catch (Exception e){
-            throw new SendingDataException("Error while sending data!");
-        }
-    }
-
-    /**
-     * Method to send Serializable object
-     * @param o Object to send
-     * @throws SendingDataException If any error occurred while sending data
-     */
-    public void sendObject(Serializable o, SocketAddress address) throws SendingDataException {
-        try {
-            byte arr[] = serialize(o);
-            send(arr, address);
         }
         catch (Exception e){
             throw new SendingDataException("Error while sending data!");
