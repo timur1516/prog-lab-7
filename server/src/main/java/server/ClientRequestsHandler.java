@@ -3,6 +3,9 @@ package server;
 import common.Commands.UserCommand;
 import common.Controllers.CommandsController;
 import common.Exceptions.*;
+import common.Exceptions.authorization.UsernameAlreadyExistsException;
+import common.Exceptions.authorization.UsernameNotFoundException;
+import common.Exceptions.authorization.WrongPasswordException;
 import common.net.dataTransfer.PackedCommand;
 import common.net.dataTransfer.UserInfo;
 import common.net.requests.*;
@@ -11,6 +14,7 @@ import server.Controllers.AuthorizationController;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
+
 
 public class ClientRequestsHandler implements Runnable {
     CommandsController clientCommandsController;
@@ -43,9 +47,7 @@ public class ClientRequestsHandler implements Runnable {
     }
 
     private ServerResponse handleClientRequest(ClientRequest clientRequest) throws SQLException, InterruptedException {
-        if(clientRequest.getRequestType() != ClientRequestType.LOG_IN &&
-                clientRequest.getRequestType() != ClientRequestType.CHECK_USERNAME &&
-                clientRequest.getRequestType() != ClientRequestType.SIGN_IN){
+        if(clientRequest.getRequestType() == ClientRequestType.EXECUTE_COMMAND){
             try {
                 AuthorizationController.logIn(clientRequest.user());
             } catch (UsernameNotFoundException | WrongPasswordException e) {

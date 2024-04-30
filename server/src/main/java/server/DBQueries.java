@@ -36,6 +36,14 @@ public class DBQueries {
                 "SELECT salt FROM User_info WHERE username = ?");
     }
 
+    public static PreparedStatement CHECK_ACCESS() throws SQLException {
+        return DBController.getInstance().getConnection().prepareStatement(
+                "SELECT EXISTS " +
+                        "(SELECT 1 FROM Worker JOIN User_info " +
+                        "ON User_info.id = Worker.user_id " +
+                        "WHERE Worker.id = ? AND username = ?)");
+    }
+
     public static PreparedStatement CLEAR_COMMAND() throws SQLException {
         return DBController.getInstance().getConnection().prepareStatement(
                 "DELETE FROM Worker WHERE user_id IN (SELECT id FROM User_info WHERE username = ?)");

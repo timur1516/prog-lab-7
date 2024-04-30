@@ -1,4 +1,4 @@
-package common.Exceptions;
+package common.Exceptions.authorization;
 
 /**
  * Super class for all exception which can be caused while authorization

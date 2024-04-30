@@ -328,4 +328,13 @@ public class CollectionController {
             ServerLogger.getInstace().error("Collection was not loaded! Not valid data!");
         }
     }
+
+    public boolean checkAccess(long id, String username) throws SQLException {
+        PreparedStatement check_access_query = DBQueries.CHECK_ACCESS();
+        check_access_query.setLong(1, id);
+        check_access_query.setString(2, username);
+        ResultSet resultSet = check_access_query.executeQuery();
+        resultSet.next();
+        return resultSet.getBoolean(1);
+    }
 }

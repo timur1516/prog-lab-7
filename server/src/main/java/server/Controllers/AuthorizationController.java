@@ -1,7 +1,7 @@
 package server.Controllers;
 
-import common.Exceptions.UsernameNotFoundException;
-import common.Exceptions.WrongPasswordException;
+import common.Exceptions.authorization.UsernameNotFoundException;
+import common.Exceptions.authorization.WrongPasswordException;
 import common.net.dataTransfer.UserInfo;
 import common.utils.PasswordHasher;
 import common.utils.RandomStringGenerator;

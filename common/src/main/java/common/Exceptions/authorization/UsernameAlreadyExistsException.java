@@ -1,4 +1,4 @@
-package common.Exceptions;
+package common.Exceptions.authorization;
 
 public class UsernameAlreadyExistsException extends AuthorizationException {
     public UsernameAlreadyExistsException(String username) {

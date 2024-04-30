@@ -54,14 +54,16 @@ public class UpdateByIdCommand extends UserCommand {
     public ServerResponse execute() {
         try {
             UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND,
-                    new PackedCommand("check_id", new ArrayList<>(List.of(id)))));
+                    new PackedCommand("check_id",
+                            new ArrayList<>(List.of(id, ClientRequest.getUser().userName())))));
+
             ServerResponse response = (ServerResponse) UDPClient.getInstance().receiveObject();
-            if ((boolean)response.data()) {
+
+            if (response.state() == ResultState.EXCEPTION) {
                 if (Constants.SCRIPT_MODE) {
                     workerReader.readWorker();
                 }
-                return new ServerResponse(ResultState.EXCEPTION,
-                        new NoSuchElementException("No element with such id!"));
+                return response;
             }
             Worker worker = workerReader.readWorker();
             ArrayList<Serializable> arguments = new ArrayList<>();

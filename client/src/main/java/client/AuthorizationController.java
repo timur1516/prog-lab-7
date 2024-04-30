@@ -2,6 +2,9 @@ package client;
 
 import common.Controllers.PropertiesFilesController;
 import common.Exceptions.*;
+import common.Exceptions.authorization.AuthorizationException;
+import common.Exceptions.authorization.DifferentPasswordsException;
+import common.Exceptions.authorization.EmptyUsernameException;
 import common.UI.Console;
 import common.UI.YesNoQuestionAsker;
 import common.net.dataTransfer.UserInfo;

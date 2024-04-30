@@ -1,4 +1,4 @@
-package common.Exceptions;
+package common.Exceptions.authorization;
 
 public class DifferentPasswordsException extends AuthorizationException{
     public DifferentPasswordsException(){
