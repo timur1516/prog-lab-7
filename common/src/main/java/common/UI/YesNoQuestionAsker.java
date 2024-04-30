@@ -1,5 +1,4 @@
 package common.UI;
-import common.Constants;
 /**
  * Class which is used to ask user yes\no question
  */
@@ -22,7 +21,6 @@ public class YesNoQuestionAsker {
      * @return true if answer is yes and false if answer is no
      */
     public boolean ask(){
-        if(Constants.SCRIPT_MODE) return true;
         Console.getInstance().printLn(question + " (yes/no)");
         while (true){
             String userAnswer = Console.getInstance().readLine();

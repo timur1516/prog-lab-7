@@ -1,4 +1,4 @@
-package common;
+package common.net.dataTransfer;
 
 import java.io.Serializable;
 

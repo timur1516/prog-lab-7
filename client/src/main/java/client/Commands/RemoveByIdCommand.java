@@ -6,6 +6,7 @@ import common.Exceptions.WrongAmountOfArgumentsException;
 import client.Parsers.WorkerParsers;
 import common.Commands.UserCommand;
 import common.Validators.WorkerValidators;
+import common.net.dataTransfer.PackedCommand;
 import common.net.requests.*;
 
 import java.io.Serializable;

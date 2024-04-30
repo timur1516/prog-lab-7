@@ -3,7 +3,7 @@ package common.Controllers;
 import common.Exceptions.InvalidDataException;
 import common.Exceptions.WrongAmountOfArgumentsException;
 import common.Commands.UserCommand;
-import common.net.requests.PackedCommand;
+import common.net.dataTransfer.PackedCommand;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;

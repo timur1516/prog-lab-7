@@ -1,18 +1,16 @@
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.List;
 
 import client.UDPClient;
-import common.Constants;
+import client.Constants;
 
 import common.UI.Console;
-import common.UserInfo;
+import common.net.dataTransfer.UserInfo;
 import common.net.requests.ClientRequest;
 import common.net.requests.ClientRequestType;
-import common.net.requests.PackedCommand;
+import common.net.dataTransfer.PackedCommand;
 
 /**
  * Main app class

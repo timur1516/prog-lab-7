@@ -3,21 +3,21 @@ package server;
 import common.Commands.UserCommand;
 import common.Controllers.CommandsController;
 import common.Exceptions.*;
-import common.UserInfo;
+import common.net.dataTransfer.PackedCommand;
+import common.net.dataTransfer.UserInfo;
 import common.net.requests.*;
-import server.Controllers.CollectionController;
+import server.Controllers.AuthorizationController;
 
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 
-public class ClientRequestHandlerTask implements Runnable {
+public class ClientRequestsHandler implements Runnable {
     CommandsController clientCommandsController;
     private final BlockingQueue<HandlingTask> handlingTasks;
     private final BlockingQueue<SendingTask> sendingTasks;
 
-    public ClientRequestHandlerTask(CommandsController clientCommandsController, BlockingQueue<HandlingTask> handlingTasks, BlockingQueue<SendingTask> sendingTasks){
+    public ClientRequestsHandler(CommandsController clientCommandsController, BlockingQueue<HandlingTask> handlingTasks, BlockingQueue<SendingTask> sendingTasks){
         this.clientCommandsController = clientCommandsController;
         this.handlingTasks = handlingTasks;
         this.sendingTasks = sendingTasks;
@@ -43,7 +43,6 @@ public class ClientRequestHandlerTask implements Runnable {
     }
 
     private ServerResponse handleClientRequest(ClientRequest clientRequest) throws SQLException, InterruptedException {
-        Thread.sleep(500);
         if(clientRequest.getRequestType() != ClientRequestType.LOG_IN &&
                 clientRequest.getRequestType() != ClientRequestType.CHECK_USERNAME &&
                 clientRequest.getRequestType() != ClientRequestType.SIGN_IN){

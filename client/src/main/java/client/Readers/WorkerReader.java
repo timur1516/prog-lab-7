@@ -3,10 +3,11 @@ package client.Readers;
 import java.time.LocalDateTime;
 
 import client.Parsers.WorkerParsers;
+import common.utils.CommonConstants;
 import common.UI.Console;
 import common.UI.YesNoQuestionAsker;
 import common.Collection.*;
-import common.Constants;
+import client.Constants;
 import common.Exceptions.InvalidDataException;
 import common.Validators.WorkerValidators;
 
@@ -30,13 +31,19 @@ public class WorkerReader extends ValueReader {
 
         LocalDateTime endDate = null;
         questionAsker = new YesNoQuestionAsker("Does worker has end date?");
-        if(questionAsker.ask()) endDate = readEndDate();
+        if(Constants.SCRIPT_MODE) endDate = readEndDate();
+        else {
+            if (questionAsker.ask()) endDate = readEndDate();
+        }
 
         Status status = readStatus();
 
         Person person = null;
         questionAsker = new YesNoQuestionAsker("Does worker has person?");
-        if(questionAsker.ask()) person = readPerson();
+        if(Constants.SCRIPT_MODE) person = readPerson();
+        else {
+            if (questionAsker.ask()) person = readPerson();
+        }
 
         return new Worker(0, name, coordinates, null, salary, startDate, endDate, status, person);
     }
@@ -92,7 +99,7 @@ public class WorkerReader extends ValueReader {
      * @throws InvalidDataException If input is wrong and script mode is on
      */
     public LocalDateTime readStartDate() throws InvalidDataException {
-        return readValue("start date (" + Constants.DATE_FORMAT_STRING + ")", WorkerValidators.startDateValidator, WorkerParsers.localDateTimeParser);
+        return readValue("start date (" + CommonConstants.DATE_FORMAT_STRING + ")", WorkerValidators.startDateValidator, WorkerParsers.localDateTimeParser);
     }
 
     /**
@@ -102,7 +109,7 @@ public class WorkerReader extends ValueReader {
      * @throws InvalidDataException If input is wrong and script mode is on
      */
     public LocalDateTime readEndDate() throws InvalidDataException {
-        return readValue("end date (" + Constants.DATE_FORMAT_STRING + ")", WorkerValidators.endDateValidator, WorkerParsers.localDateTimeParser);
+        return readValue("end date (" + CommonConstants.DATE_FORMAT_STRING + ")", WorkerValidators.endDateValidator, WorkerParsers.localDateTimeParser);
     }
 
     /**
@@ -133,11 +140,17 @@ public class WorkerReader extends ValueReader {
 
         Color eyeColor = null;
         questionAsker = new YesNoQuestionAsker("Does person has eye color?");
-        if (questionAsker.ask()) eyeColor = readEyeColor();
+        if(Constants.SCRIPT_MODE) eyeColor = readEyeColor();
+        else {
+            if (questionAsker.ask()) eyeColor = readEyeColor();
+        }
 
         Country nationality = null;
         questionAsker = new YesNoQuestionAsker("Does person has nationality?");
-        if(questionAsker.ask()) nationality = readNationality();
+        if(Constants.SCRIPT_MODE) nationality = readNationality();
+        else {
+            if (questionAsker.ask()) nationality = readNationality();
+        }
 
         return new Person(height, eyeColor, nationality);
     }

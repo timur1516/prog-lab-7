@@ -1,5 +1,6 @@
 package client;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -7,7 +8,6 @@ import java.util.*;
 
 import client.Commands.*;
 import common.Commands.HelpCommand;
-import common.Constants;
 import common.Controllers.CommandsController;
 import client.Readers.WorkerReader;
 import common.Exceptions.ReceivingDataException;
@@ -15,10 +15,10 @@ import common.Exceptions.SendingDataException;
 import common.UI.CommandReader;
 import common.UI.Console;
 import common.Commands.UserCommand;
-import common.UserInfo;
+import common.net.dataTransfer.UserInfo;
 import common.net.requests.ClientRequest;
 import common.net.requests.ServerResponse;
-import common.net.requests.PackedCommand;
+import common.net.dataTransfer.PackedCommand;
 
 /**
  * Main app class
@@ -59,8 +59,11 @@ public class Main {
         } catch (SendingDataException | ReceivingDataException e) {
             Console.getInstance().printError(e.getMessage());
             System.exit(0);
+        } catch (IOException e){
+            Console.getInstance().printError("Error occurred while working with configuration files! Please try again later");
+            System.exit(0);
         }
-        
+
         Console.getInstance().printLn(String.format("Hello %s!", user.userName()));
 
         ClientRequest.setUser(user);

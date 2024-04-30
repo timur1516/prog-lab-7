@@ -2,8 +2,9 @@ package client.Commands;
 
 import client.Readers.WorkerReader;
 import client.UDPClient;
-import common.Constants;
+import client.Constants;
 import common.Commands.UserCommand;
+import common.net.dataTransfer.PackedCommand;
 import common.net.requests.*;
 
 import java.io.Serializable;

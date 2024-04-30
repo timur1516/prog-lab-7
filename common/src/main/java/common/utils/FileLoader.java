@@ -1,4 +1,4 @@
-package common;
+package common.utils;
 
 import common.Exceptions.WrongFilePermissionsException;
 

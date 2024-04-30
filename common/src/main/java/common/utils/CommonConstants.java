@@ -1,18 +1,12 @@
-package common;
+package common.utils;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.Stack;
 
-/**
- * This class is made to store constants which are required in many parts of project
- */
-public class Constants {
-    /**
-     * Flag of script mode
-     */
-    public static boolean SCRIPT_MODE = false;
+public class CommonConstants {
+    public static final int PACKET_SIZE = 32000;
+
     /**
      * Global format for date
      */
@@ -33,14 +27,4 @@ public class Constants {
             .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
             .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
             .toFormatter();
-    /**
-     * Global stack for script file names
-     * <p>It is used to track recursion of scripts
-     */
-    public static Stack<String> scriptStack = new Stack<>();
-
-    /**
-     * Server info
-     */
-    public static final int serverPort = 8081;
 }

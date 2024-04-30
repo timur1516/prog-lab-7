@@ -1,6 +1,6 @@
 package common.Collection;
 
-import common.Constants;
+import common.utils.CommonConstants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -194,10 +194,10 @@ public class Worker implements Comparable<Worker>, Serializable {
                 "\t\tx: " + coordinates.getX() + "\n" +
                 "\t\ty: " + coordinates.getY()) + "\n" +
 
-                "\tcreationDate: " + creationDate.format(Constants.formatter) + "\n" +
+                "\tcreationDate: " + creationDate.format(CommonConstants.formatter) + "\n" +
                 "\tsalary: " + salary + "\n" +
-                "\tstartDate: " + startDate.toLocalDate().format(Constants.formatter) + "\n" +
-                "\tendDate: " + (!Objects.isNull(endDate) ? endDate.toLocalDate().format(Constants.formatter) : null) + "\n" +
+                "\tstartDate: " + startDate.toLocalDate().format(CommonConstants.formatter) + "\n" +
+                "\tendDate: " + (!Objects.isNull(endDate) ? endDate.toLocalDate().format(CommonConstants.formatter) : null) + "\n" +
                 "\tstatus: " + status + "\n" +
 
                 "\tperson:\n" +

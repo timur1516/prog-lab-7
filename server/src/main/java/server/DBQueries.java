@@ -23,12 +23,17 @@ public class DBQueries {
 
     public static PreparedStatement ADD_USER() throws SQLException {
         return DBController.getInstance().getConnection().prepareStatement(
-                "INSERT INTO User_info(username, password) VALUES (?, ?)");
+                "INSERT INTO User_info(username, password, salt) VALUES (?, ?, ?)");
     }
 
     public static PreparedStatement LOG_IN_USER() throws SQLException {
         return DBController.getInstance().getConnection().prepareStatement(
                 "SELECT EXISTS (SELECT 1 FROM User_info WHERE username = ? AND password = ?)");
+    }
+
+    public static PreparedStatement GET_SALT() throws SQLException {
+        return DBController.getInstance().getConnection().prepareStatement(
+                "SELECT salt FROM User_info WHERE username = ?");
     }
 
     public static PreparedStatement CLEAR_COMMAND() throws SQLException {

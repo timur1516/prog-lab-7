@@ -1,7 +1,6 @@
 package server;
 
 import common.Commands.HelpCommand;
-import common.Constants;
 import common.UI.Console;
 import server.Commands.*;
 import server.Controllers.CollectionController;
@@ -24,11 +23,7 @@ public class Main {
 
     private static final int N_SENDERS_THREADS = 10;
     private static final int N_HANDLERS_THREADS = 10;
-
-    /**
-     * Controller of collection
-     */
-    private static CollectionController collectionController;
+    private static final int SERVER_PORT = 8081;
 
     /**
      * Main method of program
@@ -41,7 +36,7 @@ public class Main {
         Console.getInstance().setScanner(new Scanner(System.in));
         ServerLogger.getInstace().info("Console handler was initialized successfully");
 
-        server = new UDPServer(Constants.serverPort);
+        server = new UDPServer(SERVER_PORT);
         try {
             server.open();
             ServerLogger.getInstace().info("Server started successfully");
@@ -58,6 +53,10 @@ public class Main {
             System.exit(0);
         } catch (ClassNotFoundException e) {
             ServerLogger.getInstace().error("Database driver was not found!", e);
+            System.exit(0);
+        } catch (IOException e) {
+            ServerLogger.getInstace().error("Error while reading login data for database", e);
+            ServerLogger.getInstace().info("Make sure that file dp.properties is created and located in the same directory with server program");
             System.exit(0);
         }
 
@@ -109,11 +108,11 @@ public class Main {
         ForkJoinPool clientRequestsPool = ForkJoinPool.commonPool();
 
         for(int i = 0; i < N_HANDLERS_THREADS; i++) {
-            handlerExecutorService.execute(new ClientRequestHandlerTask(clientCommandsController, handlingTasks, sendingTasks));
+            handlerExecutorService.execute(new ClientRequestsHandler(clientCommandsController, handlingTasks, sendingTasks));
         }
         for(int i = 0; i < N_SENDERS_THREADS; i++) {
-            senderExecutorService.execute(new ServerResponseSender(sendingTasks));
+            senderExecutorService.execute(new ServerResponsesSender(sendingTasks));
         }
-        clientRequestsPool.execute(new ClientRequestsReaderTask(server, handlingTasks));
+        clientRequestsPool.execute(new ClientRequestsReader(server, handlingTasks));
     }
 }

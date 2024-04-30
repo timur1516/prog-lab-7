@@ -2,7 +2,7 @@ package client.Readers;
 
 import client.Parsers.Parser;
 import common.UI.Console;
-import common.Constants;
+import client.Constants;
 import common.Exceptions.InvalidDataException;
 import common.Validators.Validator;
 

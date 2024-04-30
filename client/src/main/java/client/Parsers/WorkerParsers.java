@@ -2,7 +2,7 @@ package client.Parsers;
 
 
 import common.Collection.*;
-import common.Constants;
+import common.utils.CommonConstants;
 import common.Exceptions.InvalidDataException;
 
 import java.time.LocalDateTime;
@@ -51,7 +51,7 @@ public class WorkerParsers {
      */
     public static Parser<LocalDateTime> localDateTimeParser = s -> {
         try{
-            return LocalDateTime.parse(s, Constants.formatter);
+            return LocalDateTime.parse(s, CommonConstants.formatter);
         } catch (DateTimeParseException e){
             throw new InvalidDataException("Wrong date format!");
         }

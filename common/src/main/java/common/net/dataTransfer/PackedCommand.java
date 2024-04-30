@@ -1,4 +1,4 @@
-package common.net.requests;
+package common.net.dataTransfer;
 
 import java.io.Serializable;
 import java.util.ArrayList;

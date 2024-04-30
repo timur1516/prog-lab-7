@@ -1,15 +1,17 @@
 
-import client.UDPClient;
 import common.Exceptions.ReceivingDataException;
-import common.net.NetDataTransferringHandler;
+import common.Exceptions.SendingDataException;
+import common.utils.Serializator;
 
 import java.io.*;
 import java.net.*;
 
+import static common.utils.CommonConstants.PACKET_SIZE;
+
 /**
  * Singleton class for UPD client
  */
-public class TestUDPClient extends NetDataTransferringHandler {
+public class TestUDPClient {
     /**
      * Datagram socket for client
      */
@@ -43,7 +45,6 @@ public class TestUDPClient extends NetDataTransferringHandler {
      * Method to start UDP client
      * @throws SocketException If any error occurred
      */
-    @Override
     public void open() throws SocketException {
         this.ds = new DatagramSocket();
         this.ds.setSoTimeout(this.timeout);
@@ -52,32 +53,41 @@ public class TestUDPClient extends NetDataTransferringHandler {
     /**
      * Method to stop UPD client
      */
-    @Override
     public void stop() {
         this.ds.close();
     }
 
-    @Override
-    protected byte[] receive() throws IOException {
-        byte arr[] = new byte[PACKET_SIZE];
-        DatagramPacket dp = new DatagramPacket(arr, PACKET_SIZE);
-        this.ds.receive(dp);
-        return arr;
-    }
-
-    @Override
+    /**
+     * Method to receive Serializable object
+     * <p>Firstly it receives length of object and then object is read
+     * @return Object which was received
+     * @throws ReceivingDataException If any error while receiving data was occurred
+     */
     public Serializable receiveObject() throws ReceivingDataException {
         try {
-            return super.receiveObject();
-        }catch (ReceivingDataException e){
-            throw new ReceivingDataException("Server unavailable!");
+            byte arr[] = new byte[PACKET_SIZE];
+            DatagramPacket dp = new DatagramPacket(arr, PACKET_SIZE);
+            this.ds.receive(dp);
+            return Serializator.deserialize(arr);
         }
-
+        catch (Exception e){
+            throw new ReceivingDataException("Server error occurred while receiving data!");
+        }
     }
 
-    @Override
-    protected void send(byte[] arr) throws IOException {
-        DatagramPacket dp = new DatagramPacket(arr, arr.length, this.host, this.port);
-        this.ds.send(dp);
+    /**
+     * Method to send Serializable object
+     * @param o Object to send
+     * @throws SendingDataException If any error occurred while sending data
+     */
+    public void sendObject(Serializable o) throws SendingDataException {
+        try {
+            byte arr[] = Serializator.serialize(o);
+            DatagramPacket dp = new DatagramPacket(arr, arr.length, this.host, this.port);
+            this.ds.send(dp);
+        }
+        catch (Exception e){
+            throw new SendingDataException("Error while sending data!");
+        }
     }
 }

@@ -1,5 +1,6 @@
 package client.Commands;
 
+import client.Constants;
 import common.UI.YesNoQuestionAsker;
 import common.Commands.UserCommand;
 import common.net.requests.ServerResponse;
@@ -25,6 +26,9 @@ public class ExitCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
+        if (Constants.SCRIPT_MODE) {
+            System.exit(0);
+        }
         YesNoQuestionAsker questionAsker = new YesNoQuestionAsker("Do you want to exit?");
         if(questionAsker.ask()) {
             System.exit(0);

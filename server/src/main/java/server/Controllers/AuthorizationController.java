@@ -1,10 +1,11 @@
-package server;
+package server.Controllers;
 
-import common.Exceptions.UsernameAlreadyExistsException;
 import common.Exceptions.UsernameNotFoundException;
 import common.Exceptions.WrongPasswordException;
-import common.UI.Console;
-import common.UserInfo;
+import common.net.dataTransfer.UserInfo;
+import common.utils.PasswordHasher;
+import common.utils.RandomStringGenerator;
+import server.DBQueries;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +18,16 @@ public class AuthorizationController {
         }
         PreparedStatement login_query = DBQueries.LOG_IN_USER();
         login_query.setString(1, userInfo.userName());
-        login_query.setString(2, userInfo.password());
+
+        PreparedStatement get_salt_query = DBQueries.GET_SALT();
+        get_salt_query.setString(1, userInfo.userName());
+        ResultSet saltResult = get_salt_query.executeQuery();
+        saltResult.next();
+        String salt = saltResult.getString(1);
+
+        String password = new PasswordHasher().get_SHA_512_SecurePassword(userInfo.password() + salt);
+
+        login_query.setString(2, password);
         ResultSet result = login_query.executeQuery();
         result.next();
         boolean flag = result.getBoolean("exists");
@@ -41,7 +51,12 @@ public class AuthorizationController {
     public static void addUser(UserInfo userInfo) throws SQLException {
         PreparedStatement add_user_query = DBQueries.ADD_USER();
         add_user_query.setString(1, userInfo.userName());
-        add_user_query.setString(2, userInfo.password());
+
+        String salt = new RandomStringGenerator().generate();
+        String password = new PasswordHasher().get_SHA_512_SecurePassword(userInfo.password() + salt);
+
+        add_user_query.setString(2, password);
+        add_user_query.setString(3, salt);
         add_user_query.executeUpdate();
         add_user_query.close();
     }

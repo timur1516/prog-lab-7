@@ -1,77 +1,60 @@
 package server;
 
-import common.net.NetDataTransferringHandler;
+import common.Exceptions.ReceivingDataException;
+import common.utils.Serializator;
+import common.net.requests.ClientRequest;
 
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
-import java.nio.channels.Selector;
+
+import static common.utils.CommonConstants.PACKET_SIZE;
 
 /**
  * Class to run UDP server
  * <p>Uses {@link DatagramChannel} in non-blocking mode
  */
-public class UDPServer extends NetDataTransferringHandler{
+public class UDPServer {
     /**
      * Datagram channel to communicate with clients
      */
-    DatagramChannel dc;
+    private DatagramChannel serverChannel;
     /**
      * Socket address with server port
      * <p>After receiving first request it contains address of client
      */
-    SocketAddress SERVER_ADRESS;
+    private final SocketAddress serverAddress;
 
     UDPServer(int serverPort) {
-        SERVER_ADRESS = new InetSocketAddress(serverPort);
+        serverAddress = new InetSocketAddress(serverPort);
     }
 
-    @Override
     public void open() throws IOException {
-        this.dc = DatagramChannel.open();
-        this.dc.bind(SERVER_ADRESS);
-        this.dc.configureBlocking(false);
+        this.serverChannel = DatagramChannel.open();
+        this.serverChannel.bind(serverAddress);
+        this.serverChannel.configureBlocking(false);
     }
 
     /**
      * Method to close server channel
      * @throws IOException If any I\O error occurred
      */
-    @Override
     public void stop() throws IOException {
-        this.dc.close();
+        this.serverChannel.close();
         ServerLogger.getInstace().info("Server stopped");
     }
 
-    /**
-     * Method to register selector for server channel
-     * @param selector Selector
-     * @param ops Selector mode
-     * @throws ClosedChannelException If server channel is closed
-     */
-    public void registerSelector(Selector selector, int ops) throws ClosedChannelException {
-        this.dc.register(selector, ops);
-    }
-
-    @Override
-    protected byte[] receive() throws IOException {
-        ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
-        SERVER_ADRESS = this.dc.receive(buf);
-        if(SERVER_ADRESS == null) return null;
-        return buf.array();
-    }
-
-    @Override
-    protected void send(byte[] arr) throws IOException {
-        ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
-        buf.put(arr);
-        buf.flip();
-        this.dc.send(buf, SERVER_ADRESS);
-    }
-
-    public SocketAddress getAddr(){
-        return this.SERVER_ADRESS;
+    public HandlingTask receiveObject() throws ReceivingDataException {
+        try {
+            ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
+            SocketAddress clientAddress = this.serverChannel.receive(buf);
+            if(clientAddress == null) return null;
+            ClientRequest clientRequest = (ClientRequest) Serializator.deserialize(buf.array());
+            return new HandlingTask(clientRequest, clientAddress);
+        }
+        catch (Exception e){
+            throw new ReceivingDataException("Server error occurred while receiving data!");
+        }
     }
 }

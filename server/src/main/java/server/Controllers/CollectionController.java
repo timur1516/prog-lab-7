@@ -1,7 +1,7 @@
 package server.Controllers;
 
 import common.Collection.*;
-import common.Constants;
+import common.utils.CommonConstants;
 import common.Exceptions.InvalidDataException;
 import common.Validators.WorkerValidators;
 import server.DBQueries;
@@ -106,7 +106,7 @@ public class CollectionController {
      */
     public String getInfo() {
         return "Type: " + this.collection.getClass().getName() +
-            "\nCreation date: " + this.creationDate.format(Constants.formatter) +
+            "\nCreation date: " + this.creationDate.format(CommonConstants.formatter) +
             "\nSize: " + this.collection.size();
     }
 

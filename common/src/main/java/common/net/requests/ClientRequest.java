@@ -1,6 +1,6 @@
 package common.net.requests;
 
-import common.UserInfo;
+import common.net.dataTransfer.UserInfo;
 
 import java.io.Serializable;
 

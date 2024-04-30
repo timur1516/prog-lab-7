@@ -1,11 +1,11 @@
 package client.Commands;
 
 import client.Main;
-import common.Constants;
+import client.Constants;
 import common.Exceptions.InvalidDataException;
 import client.Exceptions.RecursiveScriptException;
 import common.Exceptions.WrongAmountOfArgumentsException;
-import common.FileLoader;
+import common.utils.FileLoader;
 import common.Commands.UserCommand;
 import common.net.requests.ServerResponse;
 

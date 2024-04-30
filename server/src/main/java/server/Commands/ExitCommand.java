@@ -5,14 +5,11 @@ import server.Exceptions.ExitingException;
 import common.UI.YesNoQuestionAsker;
 import common.Commands.UserCommand;
 import common.net.requests.ServerResponse;
-import common.net.requests.PackedCommand;
 import common.net.requests.ResultState;
-import common.Controllers.CommandsController;
 import server.Main;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
  * Class with realization of exit command

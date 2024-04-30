@@ -4,7 +4,7 @@ import common.Commands.UserCommand;
 import common.Controllers.CommandsController;
 import common.UI.CommandReader;
 import common.UI.Console;
-import common.net.requests.PackedCommand;
+import common.net.dataTransfer.PackedCommand;
 import common.net.requests.ServerResponse;
 
 public class AdminRequestsReader implements Runnable{
