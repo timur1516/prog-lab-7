@@ -18,7 +18,7 @@ public class Console {
      * <p>If CONSOLE is null it is initialized
      * @return CONSOLE
      */
-    public static Console getInstance(){
+    public static synchronized Console getInstance(){
         if(CONSOLE == null){
             CONSOLE = new Console();
         }

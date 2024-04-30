@@ -47,7 +47,7 @@ public class UDPServer extends NetDataTransferringHandler {
     @Override
     public void stop() throws IOException {
         this.dc.close();
-        Main.logger.info("Server stopped");
+        ServerLogger.getInstace().info("Server stopped");
     }
 
     /**
@@ -61,15 +61,27 @@ public class UDPServer extends NetDataTransferringHandler {
     }
 
     @Override
-    protected byte[] receive(int len) throws IOException {
-        ByteBuffer buf = ByteBuffer.allocate(len);
+    protected byte[] receive() throws IOException {
+        ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
         addr = this.dc.receive(buf);
+        if(addr == null) return null;
         return buf.array();
     }
 
     @Override
     protected void send(byte[] arr) throws IOException {
-         ByteBuffer buf = ByteBuffer.wrap(arr);
-         this.dc.send(buf, addr);
+         send(arr, this.addr);
+    }
+
+    @Override
+    protected void send(byte[] arr, SocketAddress addr) throws IOException {
+        ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
+        buf.put(arr);
+        buf.flip();
+        this.dc.send(buf, addr);
+    }
+
+    public SocketAddress getAddr(){
+        return this.addr;
     }
 }

@@ -59,8 +59,7 @@ public class RemoveFirstCommand extends UserCommand {
         try {
             this.collectionController.removeFirst(username);
         } catch (SQLException e) {
-            Main.logger.error("Database error occurred!", e);
-            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+            throw new RuntimeException(e);
         }
         return new ServerResponse(ResultState.SUCCESS,
                 "Element removed successfully!");

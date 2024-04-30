@@ -40,8 +40,10 @@ public class FilterLessThanEndDateCommand extends UserCommand {
     @Override
     public ServerResponse execute() {
         try {
-            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.IS_COLLECTION_EMPTY, null));
-            if (((boolean)UDPClient.getInstance().receiveObject())) {
+            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND,
+                    new PackedCommand("is_collection_empty", new ArrayList<>())));
+            ServerResponse response = (ServerResponse) UDPClient.getInstance().receiveObject();
+            if ((boolean)response.data()) {
                 if (Constants.SCRIPT_MODE) {
                     workerReader.readEndDate();
                 }
@@ -52,7 +54,8 @@ public class FilterLessThanEndDateCommand extends UserCommand {
             ArrayList<Serializable> arguments = new ArrayList<>();
             arguments.add(endDate);
 
-            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND, new PackedCommand(super.getName(), arguments)));
+            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND,
+                    new PackedCommand(super.getName(), arguments)));
 
             return (ServerResponse) UDPClient.getInstance().receiveObject();
         } catch (Exception e){

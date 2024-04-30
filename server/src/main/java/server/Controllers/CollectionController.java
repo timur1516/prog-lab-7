@@ -3,12 +3,9 @@ package server.Controllers;
 import common.Collection.*;
 import common.Constants;
 import common.Exceptions.InvalidDataException;
-import common.UI.Console;
-import common.UserInfo;
 import common.Validators.WorkerValidators;
-import server.Commands.AddCommand;
 import server.DBQueries;
-import server.Main;
+import server.ServerLogger;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -16,8 +13,6 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static server.Main.logger;
 
 /**
  * Class which completes all operations with Collection of workers
@@ -318,10 +313,10 @@ public class CollectionController {
 
         if(isValid(data)) {
             collection = data;
-            logger.info("Collection have been loaded successfully!");
+            ServerLogger.getInstace().info("Collection have been loaded successfully!");
         }
         else{
-            logger.error("Collection was not loaded! Not valid data!");
+            ServerLogger.getInstace().error("Collection was not loaded! Not valid data!");
         }
     }
 }

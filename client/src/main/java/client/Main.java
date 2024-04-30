@@ -26,7 +26,7 @@ import common.net.requests.PackedCommand;
  * <p>In the beginning loads data file (if it is wrong program stops), then calls interactiveMode method
  */
 public class Main {
-    private static final int TIMEOUT = 1000;
+    private static final int TIMEOUT = 10000;
     private static WorkerReader workerReader;
 
     public static UserInfo user;

@@ -18,7 +18,7 @@ public class CommandReader {
      * <p>If COMMAND_READER is null it is initialized
      * @return COMMAND_READER
      */
-    public static CommandReader getInstance(){
+    public static synchronized CommandReader getInstance(){
         if(COMMAND_READER == null){
             COMMAND_READER = new CommandReader();
         }

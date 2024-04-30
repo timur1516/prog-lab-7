@@ -58,8 +58,7 @@ public class RemoveLowerCommand extends UserCommand {
         try {
             elementsRemoved = this.collectionController.removeLower(worker, username);
         } catch (SQLException e) {
-            Main.logger.error("Database error occurred!", e);
-            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+            throw new RuntimeException(e);
         }
         return new ServerResponse(ResultState.SUCCESS,
                 String.format("Successfully removed %d elements!", elementsRemoved));

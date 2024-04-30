@@ -5,7 +5,6 @@ import common.Commands.ICommand;
 import common.Commands.UserCommand;
 import common.Exceptions.InvalidDataException;
 import common.Exceptions.ServerErrorException;
-import common.UI.Console;
 import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
@@ -57,8 +56,7 @@ public class RemoveGreaterCommand extends UserCommand {
         try {
             elementsRemoved = this.collectionController.removeGreater(worker, username);
         } catch (SQLException e) {
-            Main.logger.error("Database error occurred!", e);
-            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+            throw  new RuntimeException(e);
         }
         return new ServerResponse(ResultState.SUCCESS,
                 String.format("Successfully removed %d elements!", elementsRemoved));

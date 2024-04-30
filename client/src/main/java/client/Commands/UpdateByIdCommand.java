@@ -13,6 +13,8 @@ import common.net.requests.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -51,8 +53,10 @@ public class UpdateByIdCommand extends UserCommand {
     @Override
     public ServerResponse execute() {
         try {
-            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.CHECK_ID, id));
-            if (!(boolean)(UDPClient.getInstance().receiveObject())) {
+            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND,
+                    new PackedCommand("check_id", new ArrayList<>(List.of(id)))));
+            ServerResponse response = (ServerResponse) UDPClient.getInstance().receiveObject();
+            if ((boolean)response.data()) {
                 if (Constants.SCRIPT_MODE) {
                     workerReader.readWorker();
                 }

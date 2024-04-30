@@ -1,6 +1,5 @@
 package server.Commands;
 
-import common.Collection.Worker;
 import common.Commands.ICommand;
 import common.Commands.UserCommand;
 import common.Exceptions.InvalidDataException;
@@ -55,8 +54,7 @@ public class ClearCommand extends UserCommand {
         try {
             this.collectionController.clear(username);
         } catch (SQLException e) {
-            Main.logger.error("Database error occurred!", e);
-            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+            throw new RuntimeException(e);
         }
         return new ServerResponse(ResultState.SUCCESS, "Collection cleared successfully!");
     }

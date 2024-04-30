@@ -1,6 +1,6 @@
 package server.Controllers;
 
-import server.Main;
+import server.ServerLogger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,11 +25,13 @@ public class DBController {
         Class.forName("org.postgresql.Driver");
         this.connection = DriverManager.getConnection(jdbcUrl, username, password);
     }
+
     public Connection getConnection(){
         return this.connection;
     }
+
     public void close() throws SQLException {
         this.connection.close();
-        Main.logger.info("Database was disconnected");
+        ServerLogger.getInstace().info("Database was disconnected");
     }
 }

@@ -60,8 +60,7 @@ public class UpdateByIdCommand extends UserCommand {
         try {
             this.collectionController.update(id, worker, username);
         } catch (SQLException e) {
-            Main.logger.error("Database error occurred!", e);
-            return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
+            throw new RuntimeException(e);
         }
         return new ServerResponse(ResultState.SUCCESS,
                 "Element updated successfully!");

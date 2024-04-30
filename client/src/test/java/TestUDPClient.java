@@ -1,5 +1,5 @@
-package client;
 
+import client.UDPClient;
 import common.Exceptions.ReceivingDataException;
 import common.net.NetDataTransferringHandler;
 
@@ -9,8 +9,7 @@ import java.net.*;
 /**
  * Singleton class for UPD client
  */
-public class UDPClient extends NetDataTransferringHandler {
-    private static UDPClient UDP_CLIENT = null;
+public class TestUDPClient extends NetDataTransferringHandler {
     /**
      * Datagram socket for client
      */
@@ -27,14 +26,6 @@ public class UDPClient extends NetDataTransferringHandler {
      * Timeout for waiting for server response
      */
     int timeout;
-
-    private UDPClient(){};
-    public static UDPClient getInstance(){
-        if(UDP_CLIENT == null){
-            UDP_CLIENT = new UDPClient();
-        }
-        return UDP_CLIENT;
-    }
 
     /**
      * Method to init client

@@ -41,8 +41,10 @@ public class RemoveGreaterCommand extends UserCommand {
     @Override
     public ServerResponse execute() {
         try {
-            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.IS_COLLECTION_EMPTY, null));
-            if ((boolean)(UDPClient.getInstance().receiveObject())) {
+            UDPClient.getInstance().sendObject(new ClientRequest(ClientRequestType.EXECUTE_COMMAND,
+                    new PackedCommand("is_collection_empty", new ArrayList<>())));
+            ServerResponse response = (ServerResponse) UDPClient.getInstance().receiveObject();
+            if ((boolean)response.data()) {
                 if (Constants.SCRIPT_MODE) {
                     workerReader.readWorker();
                 }
