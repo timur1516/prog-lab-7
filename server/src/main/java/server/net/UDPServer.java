@@ -23,7 +23,6 @@ public class UDPServer {
     private DatagramChannel serverChannel;
     /**
      * Socket address with server port
-     * <p>After receiving first request it contains address of client
      */
     private final SocketAddress serverAddress;
 
@@ -46,6 +45,11 @@ public class UDPServer {
         ServerLogger.getInstace().info("Server stopped");
     }
 
+    /**
+     * Method to receive object from client
+     * @return Request with information about client address
+     * @throws ReceivingDataException If an error occurred while receiving data from client
+     */
     public HandlingTask receiveObject() throws ReceivingDataException {
         try {
             ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);

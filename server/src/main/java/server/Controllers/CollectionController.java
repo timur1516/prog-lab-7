@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Class which completes all operations with Collection of workers
+ * Singleton Class which completes all operations with Collection of workers
  */
 public class CollectionController {
     private static CollectionController COLLECTION_CONTROLLER = null;
@@ -49,7 +49,7 @@ public class CollectionController {
      * <p>Used to validate input collection from data file
      * <p>Firstly it checks if all id are unique
      * <p>Then it validate all fields using WorkerValidator
-     * @return
+     * @return Boolean value with result
      */
     private static boolean isValid(PriorityQueue<Worker> collection){
         Set<Long> idSet = collection.stream().map(Worker::getId).collect(Collectors.toSet());
@@ -208,8 +208,8 @@ public class CollectionController {
 
     /**
      * Method to load collection from SQL database
-     * <p>Before saving, validation of loaded collection is completed
-     * @throws SQLException
+     * <>Before saving, validation of loaded collection is completed
+     * @throws SQLException If an error occurred while working with database
      */
     public void loadCollection() throws SQLException {
         PriorityQueue<Worker> data = DBQueriesExecutors.getCollectionExecutor();
@@ -223,10 +223,21 @@ public class CollectionController {
         }
     }
 
+    /**
+     * Method to check if user has rights to modify element with give id
+     * @param id Element to check
+     * @param username Information about user
+     * @return Boolean value with result
+     * @throws SQLException If an error occurred while working with database
+     */
     public boolean checkAccess(long id, String username) throws SQLException {
         return DBQueriesExecutors.checkAccessExecutor(id, username);
     }
 
+    /**
+     * Method to get collection as formated string
+     * @return String with collection
+     */
     public String getStringCollection(){
         StringBuilder result = new StringBuilder();
         for(Worker worker : collection.stream().sorted().toList()) {
@@ -235,6 +246,10 @@ public class CollectionController {
         return result.toString();
     }
 
+    /**
+     * Method to check if collection is empty
+     * @return Boolean value with result
+     */
     public boolean isEmpty() {
         return this.collection.isEmpty();
     }

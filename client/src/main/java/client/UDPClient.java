@@ -69,7 +69,6 @@ public class UDPClient {
 
     /**
      * Method to receive Serializable object
-     * <p>Firstly it receives length of object and then object is read
      * @return Object which was received
      * @throws ReceivingDataException If any error while receiving data was occurred
      */

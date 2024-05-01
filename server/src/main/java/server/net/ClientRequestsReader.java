@@ -1,12 +1,11 @@
 package server.net;
 
-import common.Controllers.CommandsController;
 import common.Exceptions.ReceivingDataException;
 import server.utils.ServerLogger;
 
-import java.util.concurrent.*;
-
-
+/**
+ * {@link Runnable} task to read request from clients to server
+ */
 public class ClientRequestsReader implements Runnable{
     private final UDPServer server;
     private final ClientRequestHandler requestHandler;
@@ -16,6 +15,9 @@ public class ClientRequestsReader implements Runnable{
         this.requestHandler = requestHandler;
     }
 
+    /**
+     * Receive new request and send them to {@link ClientRequestsReader#requestHandler}
+     */
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {

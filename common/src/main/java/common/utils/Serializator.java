@@ -2,6 +2,9 @@ package common.utils;
 
 import java.io.*;
 
+/**
+ * Class with methods for serialization and deserialization of objects
+ */
 public class Serializator {
     /**
      * Method to serialize object

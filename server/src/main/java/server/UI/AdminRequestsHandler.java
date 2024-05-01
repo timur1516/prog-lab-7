@@ -7,10 +7,13 @@ import common.UI.Console;
 import common.net.dataTransfer.PackedCommand;
 import common.net.requests.ServerResponse;
 
-public class AdminRequestsReader implements Runnable{
+/**
+ * {@link Runnable} task to read and execute request from admin (uses {@link Console})
+ */
+public class AdminRequestsHandler implements Runnable{
     CommandsController serverCommandsController;
 
-    public AdminRequestsReader(CommandsController serverCommandsController){
+    public AdminRequestsHandler(CommandsController serverCommandsController){
         this.serverCommandsController = serverCommandsController;
     }
 

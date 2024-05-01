@@ -15,11 +15,12 @@ public class Constants {
      * <p>It is used to track recursion of scripts
      */
     public static Stack<String> scriptStack = new Stack<>();
-
     /**
-     * Server info
+     * Default server port which is used if reading from property file was not successful
      */
     public static final int DEFAULT_PORT_NUMBER = 8081;
-
+    /**
+     * Timeout for udp client in milliseconds
+     */
     public static final int CLIENT_TIMEOUT = 10000;
 }

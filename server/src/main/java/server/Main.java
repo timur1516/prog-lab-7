@@ -7,7 +7,7 @@ import server.Commands.*;
 import server.Controllers.CollectionController;
 import common.Controllers.CommandsController;
 import server.Controllers.DBController;
-import server.UI.AdminRequestsReader;
+import server.UI.AdminRequestsHandler;
 import server.net.*;
 import server.utils.ServerLogger;
 
@@ -24,13 +24,18 @@ public class Main {
      * Server object
      */
     public static UDPServer server;
-
+    /**
+     * Number of senders threads
+     */
     private static final int N_SENDERS_THREADS = 100;
+    /**
+     * Default port for server
+     */
     private static final int DEFAULT_SERVER_PORT = 8081;
 
     /**
      * Main method of program
-     * <p>Calls methods to load data file, init all controllers, run server and start handling client commands
+     * <p>Init all controllers, run server and start handling client commands
      * @param args (not used)
      */
     public static void main(String[] args) {
@@ -108,7 +113,7 @@ public class Main {
                 ))
         );
 
-        Thread consoleReaderThread = new Thread(new AdminRequestsReader(serverCommandsController));
+        Thread consoleReaderThread = new Thread(new AdminRequestsHandler(serverCommandsController));
         consoleReaderThread.start();
 
         BlockingQueue<SendingTask> sendingTasks = new LinkedBlockingQueue<>();
@@ -118,9 +123,9 @@ public class Main {
         ForkJoinPool clientRequestsPool = ForkJoinPool.commonPool();
 
         for(int i = 0; i < N_SENDERS_THREADS; i++) {
-            senderExecutorService.submit(new ServerResponsesSender(sendingTasks));
+            senderExecutorService.execute(new ServerResponsesSender(sendingTasks));
         }
-        clientRequestsPool.submit(new ClientRequestsReader(server, requestHandler));
+        clientRequestsPool.execute(new ClientRequestsReader(server, requestHandler));
     }
 
     private static int readServerPort() throws IOException, NumberFormatException {

@@ -5,6 +5,9 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
 public class CommonConstants {
+    /**
+     * Size of buffer which is used to exchange information between client and server
+     */
     public static final int PACKET_SIZE = 32000;
 
     /**

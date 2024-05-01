@@ -4,7 +4,9 @@ import common.net.dataTransfer.UserInfo;
 
 import java.io.Serializable;
 
-
+/**
+ * Method to store and transfer requests from client to server
+ */
 public class ClientRequest implements Serializable{
     private final ClientRequestType requestType;
     private final Serializable data;

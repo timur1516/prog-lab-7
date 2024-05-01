@@ -16,7 +16,10 @@ import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 
-
+/**
+ * {@link Runnable} task for executing request from client
+ * <p>It gets {@link ServerResponse} and add it to sendingTasks {@link BlockingQueue}
+ */
 public class ClientRequestsHandlerTask implements Runnable {
     private final CommandsController clientCommandsController;
     private final HandlingTask handlingTask;
@@ -44,7 +47,13 @@ public class ClientRequestsHandlerTask implements Runnable {
         }
     }
 
-    private ServerResponse handleClientRequest(ClientRequest clientRequest) throws SQLException, InterruptedException {
+    /**
+     * Method to process {@link ClientRequest}
+     * @param clientRequest
+     * @return Response from server
+     * @throws SQLException If an error occurred while working with database
+     */
+    private ServerResponse handleClientRequest(ClientRequest clientRequest) throws SQLException {
         if(clientRequest.getRequestType() == ClientRequestType.EXECUTE_COMMAND){
             try {
                 AuthorizationController.logIn(clientRequest.user());

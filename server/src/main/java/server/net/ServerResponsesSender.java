@@ -10,6 +10,9 @@ import java.util.concurrent.BlockingQueue;
 
 import static common.utils.CommonConstants.PACKET_SIZE;
 
+/**
+ * {@link Runnable} task to send responses to clients
+ */
 public class ServerResponsesSender implements Runnable{
     BlockingQueue<SendingTask> sendingTasks;
 
@@ -17,14 +20,19 @@ public class ServerResponsesSender implements Runnable{
         this.sendingTasks = sendingTasks;
     }
 
+    /**
+     * It reads responses from {@link BlockingQueue} and then send than
+     * <p>For each client new channel is opened and then closed
+     */
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()){
-            SendingTask task = null;
+            SendingTask task;
             try {
                 task = sendingTasks.take();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                break;
             }
             if(task.response() == null) continue;
             try {

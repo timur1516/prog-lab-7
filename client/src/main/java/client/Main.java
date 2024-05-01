@@ -24,19 +24,24 @@ import common.net.dataTransfer.PackedCommand;
 /**
  * Main app class
  * <p>Completes initialization of all controllers, sets default input stream for Console
- * <p>In the beginning loads data file (if it is wrong program stops), then calls interactiveMode method
+ * <p>In the beginning starts udp client, then calls interactiveMode method
  */
 public class Main {
+    /**
+     * Reader elements of collection
+     */
     private static WorkerReader workerReader;
-
-    public static UserInfo user;
+    /**
+     * Information about user
+     */
+    private static UserInfo user;
     /**
      * Controller of commands
      */
     private static CommandsController commandsController;
     /**
      * Main method of program
-     * <p>Calls methods to load data file, init all controllers and start handling user commands
+     * <p>Init all controllers, starts udp client, and start handling user commands
      * @param args (not used)
      */
     public static void main(String[] args) {
@@ -101,6 +106,12 @@ public class Main {
         interactiveMode();
     }
 
+    /**
+     * Method to read server port from properties config file
+     * @return Integer server port
+     * @throws IOException If any I\O error occurred
+     * @throws NumberFormatException If port number unparsable for Integer
+     */
     private static int readServerPort() throws IOException, NumberFormatException {
         Properties configProperties = new PropertiesFilesController().readProperties("config.properties");
         return Integer.parseInt(configProperties.getProperty("port"));

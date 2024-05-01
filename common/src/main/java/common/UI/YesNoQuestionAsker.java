@@ -1,4 +1,5 @@
 package common.UI;
+
 /**
  * Class which is used to ask user yes\no question
  */

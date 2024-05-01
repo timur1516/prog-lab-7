@@ -16,15 +16,26 @@ import java.util.NoSuchElementException;
 
 /**
  * Command which check if collection contains given id
+ * <p>It also checks if user has rights to modify element with this id
  */
 public class CheckIdCommand extends UserCommand {
     private long id;
     private String username;
 
+    /**
+     * CheckIdCommand constructor
+     * <> Firstly it initializes super constructor by command name, arguments and description
+     */
     public CheckIdCommand(){
         super("check_id", "command to check if collection contains given id and user has rights to operate with it", "id", "user");
     }
 
+    /**
+     * Method to complete CheckEmptyCollectionCommand
+     * <>Firstly it checks if collection contains given id
+     * <>Then user rights to modify this element are checked
+     * @return SeverResponse
+     */
     @Override
     public ServerResponse execute() {
         if(!CollectionController.getInstance().containsId(id)){

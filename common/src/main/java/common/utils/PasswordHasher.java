@@ -4,7 +4,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Class to hash passwords
+ */
 public class PasswordHasher {
+    /**
+     * Method to hash password using SHA-512 method
+     * @param passwordToHash Password to hash as string
+     * @return Hashed password as string
+     */
     public String get_SHA_512_SecurePassword(String passwordToHash){
         String generatedPassword = null;
         try {

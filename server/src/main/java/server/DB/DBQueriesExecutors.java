@@ -8,6 +8,9 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.PriorityQueue;
 
+/**
+ * Class which contains methods to execute queries from {@link DBQueries} with given parameters and receive result if it exists
+ */
 public class DBQueriesExecutors {
     public static PriorityQueue<Worker> getCollectionExecutor() throws SQLException {
         PreparedStatement get_collection_query = DBQueries.GET_COLLECTION();
