@@ -1,0 +1,301 @@
+@startuml
+class server.Controllers.DBController {
+- {static} String LOGIN_DATA_FILE
+- {static} String DATABASE_DRIVER
+- Connection connection
+- {static} DBController CONTROLLER
+- <<Create>> DBController()
++ {static} DBController getInstance()
++ void connect()
++ Connection getConnection()
++ void close()
+}
+
+
+class server.Commands.AddCommand {
+- Worker worker
+- String username
++ <<Create>> AddCommand()
++ void initCommandArgs(ArrayList<Serializable>)
++ ServerResponse execute()
+}
+
+
+class server.net.UDPServer {
+- DatagramChannel serverChannel
+- SocketAddress serverAddress
++ <<Create>> UDPServer(int)
++ void open()
++ void stop()
++ HandlingTask receiveObject()
+}
+
+
+class server.DB.DBQueries {
++ {static} PreparedStatement GET_COLLECTION()
++ {static} PreparedStatement CHECK_USERNAME()
++ {static} PreparedStatement ADD_USER()
++ {static} PreparedStatement LOG_IN_USER()
++ {static} PreparedStatement GET_SALT()
++ {static} PreparedStatement CHECK_ACCESS()
++ {static} PreparedStatement CLEAR_COMMAND()
++ {static} PreparedStatement ADD_COMMAND()
++ {static} PreparedStatement REMOVE_BY_ID_COMMAND()
++ {static} PreparedStatement REMOVE_FIRST_COMMAND()
++ {static} PreparedStatement REMOVE_GREATER_COMMAND()
++ {static} PreparedStatement REMOVE_LOWER_COMMAND()
++ {static} PreparedStatement UPDATE_COMMAND()
+}
+
+class server.Commands.ClearCommand {
+- String username
++ <<Create>> ClearCommand()
++ void initCommandArgs(ArrayList<Serializable>)
++ ServerResponse execute()
+}
+
+
+class server.utils.ServerLogger {
+- {static} Logger LOGGER
++ {static} Logger getInstace()
+}
+
+
+class server.Commands.RemoveByIdCommand {
+- long id
+- String username
++ <<Create>> RemoveByIdCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class server.Main {
++ {static} UDPServer server
+- {static} int N_SENDERS_THREADS
+- {static} int DEFAULT_SERVER_PORT
++ {static} void main(String[])
+- {static} int readServerPort()
+}
+
+
+class server.net.SendingTask {
+- ServerResponse response
+- SocketAddress address
++ <<Create>> SendingTask(ServerResponse,SocketAddress)
++ ServerResponse response()
++ SocketAddress address()
+}
+
+
+class server.Commands.UpdateByIdCommand {
+- long id
+- Worker worker
+- String username
++ <<Create>> UpdateByIdCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class server.net.ClientRequestsHandlerTask {
+- CommandsController clientCommandsController
+- HandlingTask handlingTask
+- BlockingQueue<SendingTask> sendingTasks
++ <<Create>> ClientRequestsHandlerTask(CommandsController,HandlingTask,BlockingQueue<SendingTask>)
++ void run()
+- ServerResponse handleClientRequest(ClientRequest)
+}
+
+
+class server.Commands.RemoveLowerCommand {
+- Worker worker
+- String username
++ <<Create>> RemoveLowerCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class server.Commands.CheckIdCommand {
+- long id
+- String username
++ <<Create>> CheckIdCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class server.Commands.InfoCommand {
++ <<Create>> InfoCommand()
++ ServerResponse execute()
+}
+
+class server.net.ClientRequestsReader {
+- UDPServer server
+- ClientRequestHandler requestHandler
++ <<Create>> ClientRequestsReader(UDPServer,ClientRequestHandler)
++ void run()
+}
+
+
+class server.net.ClientRequestHandler {
+- CommandsController clientCommandsController
+- ExecutorService handlerExecutorService
+- BlockingQueue<SendingTask> sendingTasks
++ <<Create>> ClientRequestHandler(CommandsController,BlockingQueue<SendingTask>)
++ void handleTask(HandlingTask)
+}
+
+
+class server.net.ServerResponsesSender {
+~ BlockingQueue<SendingTask> sendingTasks
++ <<Create>> ServerResponsesSender(BlockingQueue<SendingTask>)
++ void run()
+}
+
+
+class server.Commands.ShowCommand {
++ <<Create>> ShowCommand()
++ ServerResponse execute()
+}
+
+class server.Commands.FilterLessThanEndDateCommand {
+- LocalDateTime endDate
++ <<Create>> FilterLessThanEndDateCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class server.Controllers.AuthorizationController {
++ {static} void logIn(UserInfo)
++ {static} boolean checkUsername(String)
++ {static} void addUser(UserInfo)
+}
+
+class server.Exceptions.ExitingException {
++ <<Create>> ExitingException(String)
+}
+
+class server.net.HandlingTask {
+- ClientRequest clientRequest
+- SocketAddress address
++ <<Create>> HandlingTask(ClientRequest,SocketAddress)
++ ClientRequest clientRequest()
++ SocketAddress address()
+}
+
+
+class server.Commands.CheckEmptyCollectionCommand {
++ <<Create>> CheckEmptyCollectionCommand()
++ ServerResponse execute()
+}
+
+class server.Commands.RemoveGreaterCommand {
+- Worker worker
+- String username
++ <<Create>> RemoveGreaterCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class server.UI.AdminRequestsHandler {
+~ CommandsController serverCommandsController
++ <<Create>> AdminRequestsHandler(CommandsController)
++ void run()
+- void handleAdminRequest(PackedCommand)
+}
+
+
+class server.Commands.ExitCommand {
++ <<Create>> ExitCommand()
++ ServerResponse execute()
+}
+
+class server.Commands.RemoveFirstCommand {
+- String username
++ <<Create>> RemoveFirstCommand()
++ void initCommandArgs(ArrayList<Serializable>)
++ ServerResponse execute()
+}
+
+
+class server.DB.DBQueriesExecutors {
++ {static} PriorityQueue<Worker> getCollectionExecutor()
++ {static} boolean checkUsername(String)
++ {static} void addUser(String,String,String)
++ {static} boolean logInUserExecutor(String,String)
++ {static} String getSaltExecutor(String)
++ {static} boolean checkAccessExecutor(long,String)
++ {static} void clearCommandExecutor(String)
++ {static} void addCommandExecutor(Worker,String)
++ {static} void removeByIdCommandExecutor(long,String)
++ {static} void removeFirstCommandExecutor(String)
++ {static} void removeGreaterCommandExecutor(Worker,String)
++ {static} void removeLowerCommandExecutor(Worker,String)
++ {static} void updateCommandExecutor(Worker,long,String)
+- {static} void loadWorkerToStatement(Worker,PreparedStatement)
+}
+
+class server.Commands.MinBySalaryCommand {
++ <<Create>> MinBySalaryCommand()
++ ServerResponse execute()
+}
+
+class server.Controllers.CollectionController {
+- {static} CollectionController COLLECTION_CONTROLLER
+- PriorityQueue<Worker> collection
+- LocalDateTime creationDate
+- <<Create>> CollectionController()
++ {static} CollectionController getInstance()
+- {static} boolean isValid(PriorityQueue<Worker>)
++ LocalDateTime getCreationDate()
++ boolean containsId(long)
++ String getInfo()
++ void add(Worker,String)
++ void update(long,Worker,String)
++ void removeById(long,String)
++ void clear(String)
++ void removeFirst(String)
++ int removeGreater(Worker,String)
++ int removeLower(Worker,String)
++ Worker getMinBySalary()
++ List<Worker> getLessThanEndDate(LocalDateTime)
++ List<Integer> getDescendingSalaries()
++ void loadCollection()
++ boolean checkAccess(long,String)
++ String getStringCollection()
++ boolean isEmpty()
+}
+
+
+class server.Commands.PrintFieldDescendingSalaryCommand {
++ <<Create>> PrintFieldDescendingSalaryCommand()
++ ServerResponse execute()
+}
+
+
+
+common.Commands.UserCommand <|-- server.Commands.AddCommand
+common.Commands.UserCommand <|-- server.Commands.ClearCommand
+common.Commands.UserCommand <|-- server.Commands.RemoveByIdCommand
+common.Commands.UserCommand <|-- server.Commands.UpdateByIdCommand
+server.net.Runnable <|.. server.net.ClientRequestsHandlerTask
+common.Commands.UserCommand <|-- server.Commands.RemoveLowerCommand
+common.Commands.UserCommand <|-- server.Commands.CheckIdCommand
+common.Commands.UserCommand <|-- server.Commands.InfoCommand
+server.net.Runnable <|.. server.net.ClientRequestsReader
+server.net.Runnable <|.. server.net.ServerResponsesSender
+common.Commands.UserCommand <|-- server.Commands.ShowCommand
+common.Commands.UserCommand <|-- server.Commands.FilterLessThanEndDateCommand
+server.Exceptions.Exception <|-- server.Exceptions.ExitingException
+common.Commands.UserCommand <|-- server.Commands.CheckEmptyCollectionCommand
+common.Commands.UserCommand <|-- server.Commands.RemoveGreaterCommand
+server.UI.Runnable <|.. server.UI.AdminRequestsHandler
+common.Commands.UserCommand <|-- server.Commands.ExitCommand
+common.Commands.UserCommand <|-- server.Commands.RemoveFirstCommand
+common.Commands.UserCommand <|-- server.Commands.MinBySalaryCommand
+common.Commands.UserCommand <|-- server.Commands.PrintFieldDescendingSalaryCommand
+@enduml

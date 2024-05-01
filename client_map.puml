@@ -1,0 +1,198 @@
+@startuml
+class client.Exceptions.RecursiveScriptException {
++ <<Create>> RecursiveScriptException(String)
+}
+
+class client.Commands.FilterLessThanEndDateCommand {
+- WorkerReader workerReader
++ <<Create>> FilterLessThanEndDateCommand(WorkerReader)
++ ServerResponse execute()
+}
+
+
+class Main {
+- {static} int TIMEOUT
+- {static} int NUMBER_OF_THREADS
++ {static} void main(String[])
+}
+
+
+class client.Commands.RemoveLowerCommand {
+- WorkerReader workerReader
++ <<Create>> RemoveLowerCommand(WorkerReader)
++ ServerResponse execute()
+}
+
+
+class client.Parsers.WorkerParsers {
++ {static} Parser<String> stringParser
++ {static} Parser<Long> longParser
++ {static} Parser<Integer> integerParser
++ {static} Parser<Double> doubleParser
++ {static} Parser<LocalDateTime> localDateTimeParser
++ {static} Parser<Status> statusParser
++ {static} Parser<Color> eyeColorParser
++ {static} Parser<Country> nationalityParser
+}
+
+class client.Commands.InfoCommand {
++ <<Create>> InfoCommand()
++ ServerResponse execute()
+}
+
+
+class client.Constants {
++ {static} boolean SCRIPT_MODE
++ {static} Stack<String> scriptStack
++ {static} int DEFAULT_PORT_NUMBER
++ {static} int CLIENT_TIMEOUT
+}
+
+class client.Commands.UpdateByIdCommand {
+- WorkerReader workerReader
+- long id
++ <<Create>> UpdateByIdCommand(WorkerReader)
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class client.Commands.ShowCommand {
++ <<Create>> ShowCommand()
++ ServerResponse execute()
+}
+
+class client.Commands.RemoveByIdCommand {
+- long id
++ <<Create>> RemoveByIdCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class client.Commands.RemoveFirstCommand {
++ <<Create>> RemoveFirstCommand()
++ ServerResponse execute()
+}
+
+class client.Commands.MinBySalaryCommand {
++ <<Create>> MinBySalaryCommand()
++ ServerResponse execute()
+}
+
+abstract class client.Readers.ValueReader {
++ T readValue(String,Validator<T>,Parser<T>)
+}
+
+class client.Commands.RemoveGreaterCommand {
+- WorkerReader workerReader
++ <<Create>> RemoveGreaterCommand(WorkerReader)
++ ServerResponse execute()
+}
+
+
+class client.Readers.WorkerReader {
++ Worker readWorker()
++ String readName()
++ Coordinates readCoordinates()
++ double readX()
++ double readY()
++ Integer readSalary()
++ LocalDateTime readStartDate()
++ LocalDateTime readEndDate()
++ Status readStatus()
++ Person readPerson()
++ long readHeight()
++ Color readEyeColor()
++ Country readNationality()
+}
+
+class client.Main {
+- {static} WorkerReader workerReader
+- {static} UserInfo user
+- {static} CommandsController commandsController
++ {static} void main(String[])
+- {static} int readServerPort()
++ {static} void scriptMode()
++ {static} void interactiveMode()
+}
+
+
+class client.Commands.PrintFieldDescendingSalaryCommand {
++ <<Create>> PrintFieldDescendingSalaryCommand()
++ ServerResponse execute()
+}
+
+class client.Commands.ExitCommand {
++ <<Create>> ExitCommand()
++ ServerResponse execute()
+}
+
+interface client.Parsers.Parser {
+~ T parse(String)
+}
+
+class client.Commands.ExecuteScriptCommand {
+- String scriptFilePath
++ <<Create>> ExecuteScriptCommand()
++ ServerResponse execute()
++ void initCommandArgs(ArrayList<Serializable>)
+}
+
+
+class client.AuthorizationController {
++ {static} UserInfo authorize()
+- {static} void handleAuthorizationResult()
++ {static} UserInfo logIn()
++ {static} void singIn()
+}
+
+
+class client.Commands.ClearCommand {
++ <<Create>> ClearCommand()
++ ServerResponse execute()
+}
+
+class client.UDPClient {
+- {static} UDPClient UDP_CLIENT
+~ DatagramSocket ds
+~ InetAddress host
+~ int port
+~ int timeout
+- <<Create>> UDPClient()
++ {static} UDPClient getInstance()
++ void init(InetAddress,int,int)
++ void open()
++ void stop()
++ Serializable receiveObject()
++ void sendObject(Serializable)
+}
+
+
+class client.Commands.AddCommand {
+- WorkerReader workerReader
++ <<Create>> AddCommand(WorkerReader)
++ ServerResponse execute()
+}
+
+
+
+
+client.Exceptions.Exception <|-- client.Exceptions.RecursiveScriptException
+common.Commands.UserCommand <|-- client.Commands.FilterLessThanEndDateCommand
+common.Commands.UserCommand <|-- client.Commands.RemoveLowerCommand
+common.Commands.UserCommand <|-- client.Commands.InfoCommand
+common.Commands.UserCommand <|-- client.Commands.UpdateByIdCommand
+common.Commands.UserCommand <|-- client.Commands.ShowCommand
+common.Commands.UserCommand <|-- client.Commands.RemoveByIdCommand
+common.Commands.UserCommand <|-- client.Commands.RemoveFirstCommand
+common.Commands.UserCommand <|-- client.Commands.MinBySalaryCommand
+common.Commands.UserCommand <|-- client.Commands.RemoveGreaterCommand
+client.Readers.ValueReader <|-- client.Readers.WorkerReader
+common.Commands.UserCommand <|-- client.Commands.PrintFieldDescendingSalaryCommand
+common.Commands.UserCommand <|-- client.Commands.ExitCommand
+common.Commands.UserCommand <|-- client.Commands.ExecuteScriptCommand
+Runnable <|.. TestClient
+common.Commands.UserCommand <|-- client.Commands.ClearCommand
+common.Commands.UserCommand <|-- client.Commands.AddCommand
+@enduml

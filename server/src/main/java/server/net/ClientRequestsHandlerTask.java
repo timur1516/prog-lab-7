@@ -65,12 +65,13 @@ public class ClientRequestsHandlerTask implements Runnable {
         ServerResponse response = null;
         switch (clientRequest.getRequestType()) {
             case EXECUTE_COMMAND:
+                String username = clientRequest.user().userName();
                 PackedCommand packedCommand = (PackedCommand) clientRequest.data();
-                ServerLogger.getInstace().info("Request for executing command {}", packedCommand.commandName());
+                ServerLogger.getInstace().info("Request for executing command {} from user '{}'", packedCommand.commandName(), username);
                 try {
                     UserCommand command = clientCommandsController.launchCommand(packedCommand);
                     response = command.execute();
-                    ServerLogger.getInstace().info("Command {} executed successfully", packedCommand.commandName());
+                    ServerLogger.getInstace().info("Command {} from user '{}' executed successfully", packedCommand.commandName(), username);
                 } catch (WrongAmountOfArgumentsException | InvalidDataException | NoSuchElementException e) {
                     response = new ServerResponse(ResultState.EXCEPTION, e);
                 }
