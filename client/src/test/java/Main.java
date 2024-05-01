@@ -18,28 +18,17 @@ import common.net.dataTransfer.PackedCommand;
  * <p>In the beginning loads data file (if it is wrong program stops), then calls interactiveMode method
  */
 public class Main {
-    private static final int TIMEOUT = 10000;
-    private static final int NUMBER_OF_THREADS = 100;
+    private static final int TIMEOUT = 0;
+    private static final int NUMBER_OF_THREADS = 1000;
     public static void main(String[] args) {
-        try {
-            UDPClient.getInstance().init(InetAddress.getLocalHost(), Constants.serverPort, TIMEOUT);
-            UDPClient.getInstance().open();
-        } catch (UnknownHostException e) {
-            Console.getInstance().printError("Server host was not found!");
-            System.exit(0);
-        } catch (SocketException e) {
-            Console.getInstance().printError("Error while starting client!");
-            System.exit(0);
-        }
-
-        UserInfo user = new UserInfo("po", "pod");
+        UserInfo user = new UserInfo("po", "76b02698b6432b6a0f5562b853b24f4badd56e97382ffcfd8661287d2d1b52d2f32160389dbe9f5ecf034783bdfb388cbba3cbeea1a33615f8d6fe71e739eee9");
 
         ClientRequest.setUser(user);
 
         for(int i = 0; i < NUMBER_OF_THREADS; i++){
             TestUDPClient udpClient = new TestUDPClient();
             try {
-                udpClient.init(InetAddress.getLocalHost(), Constants.serverPort, TIMEOUT);
+                udpClient.init(InetAddress.getLocalHost(), Constants.DEFAULT_PORT_NUMBER, TIMEOUT);
                 udpClient.open();
             } catch (UnknownHostException | SocketException e) {
                 throw new RuntimeException(e);
@@ -47,7 +36,7 @@ public class Main {
             PackedCommand packedCommand = new PackedCommand("show", new ArrayList<>());
             ClientRequest clientRequest = new ClientRequest(ClientRequestType.EXECUTE_COMMAND, packedCommand);
 
-            Thread thread = new Thread(new TestClient(udpClient, 100, clientRequest));
+            Thread thread = new Thread(new TestClient(udpClient, 1000, clientRequest));
             thread.start();
         }
     }

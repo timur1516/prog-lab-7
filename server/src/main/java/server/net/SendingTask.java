@@ -1,4 +1,4 @@
-package server;
+package server.net;
 
 import common.net.requests.ServerResponse;
 

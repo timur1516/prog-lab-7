@@ -5,7 +5,7 @@ import common.Exceptions.authorization.WrongPasswordException;
 import common.net.dataTransfer.UserInfo;
 import common.utils.PasswordHasher;
 import common.utils.RandomStringGenerator;
-import server.DBQueries;
+import server.DB.DBQueries;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

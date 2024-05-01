@@ -1,8 +1,9 @@
-package server;
+package server.net;
 
 import common.Exceptions.ReceivingDataException;
 import common.utils.Serializator;
 import common.net.requests.ClientRequest;
+import server.utils.ServerLogger;
 
 import java.io.*;
 import java.net.*;
@@ -26,7 +27,7 @@ public class UDPServer {
      */
     private final SocketAddress serverAddress;
 
-    UDPServer(int serverPort) {
+    public UDPServer(int serverPort) {
         serverAddress = new InetSocketAddress(serverPort);
     }
 

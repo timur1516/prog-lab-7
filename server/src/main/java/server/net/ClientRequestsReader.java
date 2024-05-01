@@ -1,17 +1,19 @@
-package server;
+package server.net;
 
+import common.Controllers.CommandsController;
 import common.Exceptions.ReceivingDataException;
+import server.utils.ServerLogger;
 
 import java.util.concurrent.*;
 
 
 public class ClientRequestsReader implements Runnable{
     private final UDPServer server;
-    private final BlockingQueue<HandlingTask> handlingTasks;
+    private final ClientRequestHandler requestHandler;
 
-    public ClientRequestsReader(UDPServer server, BlockingQueue<HandlingTask> handlingTasks){
+    public ClientRequestsReader(UDPServer server, ClientRequestHandler requestHandler){
         this.server = server;
-        this.handlingTasks = handlingTasks;
+        this.requestHandler = requestHandler;
     }
 
     @Override
@@ -19,12 +21,10 @@ public class ClientRequestsReader implements Runnable{
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 HandlingTask handlingTask = server.receiveObject();
-                if(handlingTask == null) continue;
-                this.handlingTasks.put(handlingTask);
+                if (handlingTask == null) continue;
+                this.requestHandler.handleTask(handlingTask);
             } catch (ReceivingDataException e) {
                 ServerLogger.getInstace().error("Could not receive data from client", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
         }
     }

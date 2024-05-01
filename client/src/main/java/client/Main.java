@@ -10,6 +10,7 @@ import client.Commands.*;
 import common.Commands.HelpCommand;
 import common.Controllers.CommandsController;
 import client.Readers.WorkerReader;
+import common.Controllers.PropertiesFilesController;
 import common.Exceptions.ReceivingDataException;
 import common.Exceptions.SendingDataException;
 import common.UI.CommandReader;
@@ -26,7 +27,6 @@ import common.net.dataTransfer.PackedCommand;
  * <p>In the beginning loads data file (if it is wrong program stops), then calls interactiveMode method
  */
 public class Main {
-    private static final int TIMEOUT = 10000;
     private static WorkerReader workerReader;
 
     public static UserInfo user;
@@ -43,8 +43,18 @@ public class Main {
         Console.getInstance().setScanner(new Scanner(System.in));
         workerReader = new WorkerReader();
 
+        int serverPort = Constants.DEFAULT_PORT_NUMBER;
         try {
-            UDPClient.getInstance().init(InetAddress.getLocalHost(), Constants.serverPort, TIMEOUT);
+            serverPort = readServerPort();
+            Console.getInstance().printLn(String.format("Server port set to: %d", serverPort));
+        } catch (IOException | NumberFormatException e) {
+            Console.getInstance().printLn("Error while reading config file!\n" +
+                    "Server port set to default value: 8081\n" +
+                    "If you want to change it, create config.properties file and restart program");
+        }
+
+        try {
+            UDPClient.getInstance().init(InetAddress.getLocalHost(), serverPort, Constants.CLIENT_TIMEOUT);
             UDPClient.getInstance().open();
         } catch (UnknownHostException e) {
             Console.getInstance().printError("Server host was not found!");
@@ -89,6 +99,11 @@ public class Main {
                 ))
         );
         interactiveMode();
+    }
+
+    private static int readServerPort() throws IOException, NumberFormatException {
+        Properties configProperties = new PropertiesFilesController().readProperties("config.properties");
+        return Integer.parseInt(configProperties.getProperty("port"));
     }
 
     /**

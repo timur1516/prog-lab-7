@@ -1,4 +1,4 @@
-package server;
+package server.net;
 
 import common.Commands.UserCommand;
 import common.Controllers.CommandsController;
@@ -10,39 +10,37 @@ import common.net.dataTransfer.PackedCommand;
 import common.net.dataTransfer.UserInfo;
 import common.net.requests.*;
 import server.Controllers.AuthorizationController;
+import server.utils.ServerLogger;
 
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 
 
-public class ClientRequestsHandler implements Runnable {
-    CommandsController clientCommandsController;
-    private final BlockingQueue<HandlingTask> handlingTasks;
+public class ClientRequestsHandlerTask implements Runnable {
+    private final CommandsController clientCommandsController;
+    private final HandlingTask handlingTask;
     private final BlockingQueue<SendingTask> sendingTasks;
 
-    public ClientRequestsHandler(CommandsController clientCommandsController, BlockingQueue<HandlingTask> handlingTasks, BlockingQueue<SendingTask> sendingTasks){
+    public ClientRequestsHandlerTask(CommandsController clientCommandsController, HandlingTask handlingTask, BlockingQueue<SendingTask> sendingTasks){
         this.clientCommandsController = clientCommandsController;
-        this.handlingTasks = handlingTasks;
+        this.handlingTask = handlingTask;
         this.sendingTasks = sendingTasks;
     }
 
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
+        try {
+            ServerResponse response;
             try {
-                HandlingTask task = this.handlingTasks.take();
-                ServerResponse response;
-                try {
-                    response = handleClientRequest(task.clientRequest());
-                } catch (SQLException e) {
-                    ServerLogger.getInstace().error("Database error occurred", e);
-                    response = new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
-                }
-                this.sendingTasks.put(new SendingTask(response, task.address()));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                response = handleClientRequest(this.handlingTask.clientRequest());
+            } catch (SQLException e) {
+                ServerLogger.getInstace().error("Database error occurred", e);
+                response = new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
             }
+            this.sendingTasks.put(new SendingTask(response, this.handlingTask.address()));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

@@ -4,8 +4,8 @@ import common.Collection.*;
 import common.utils.CommonConstants;
 import common.Exceptions.InvalidDataException;
 import common.Validators.WorkerValidators;
-import server.DBQueries;
-import server.ServerLogger;
+import server.DB.DBQueries;
+import server.utils.ServerLogger;
 
 import java.sql.*;
 import java.time.LocalDateTime;

@@ -71,6 +71,7 @@ public class TestUDPClient {
             return Serializator.deserialize(arr);
         }
         catch (Exception e){
+            //throw new RuntimeException(e);
             throw new ReceivingDataException("Server error occurred while receiving data!");
         }
     }
@@ -87,6 +88,7 @@ public class TestUDPClient {
             this.ds.send(dp);
         }
         catch (Exception e){
+            //throw new RuntimeException(e);
             throw new SendingDataException("Error while sending data!");
         }
     }

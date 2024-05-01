@@ -1,8 +1,5 @@
 package client;
 
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.Stack;
 
 /**
@@ -22,5 +19,7 @@ public class Constants {
     /**
      * Server info
      */
-    public static final int serverPort = 8081;
+    public static final int DEFAULT_PORT_NUMBER = 8081;
+
+    public static final int CLIENT_TIMEOUT = 10000;
 }

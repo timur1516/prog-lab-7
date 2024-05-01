@@ -1,9 +1,7 @@
-package server;
+package server.DB;
 
-import jdk.jfr.Percentage;
 import server.Controllers.DBController;
 
-import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 

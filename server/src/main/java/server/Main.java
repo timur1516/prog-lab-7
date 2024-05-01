@@ -1,11 +1,15 @@
 package server;
 
 import common.Commands.HelpCommand;
+import common.Controllers.PropertiesFilesController;
 import common.UI.Console;
 import server.Commands.*;
 import server.Controllers.CollectionController;
 import common.Controllers.CommandsController;
 import server.Controllers.DBController;
+import server.UI.AdminRequestsReader;
+import server.net.*;
+import server.utils.ServerLogger;
 
 import java.io.*;
 import java.sql.*;
@@ -21,9 +25,8 @@ public class Main {
      */
     public static UDPServer server;
 
-    private static final int N_SENDERS_THREADS = 10;
-    private static final int N_HANDLERS_THREADS = 10;
-    private static final int SERVER_PORT = 8081;
+    private static final int N_SENDERS_THREADS = 100;
+    private static final int DEFAULT_SERVER_PORT = 8081;
 
     /**
      * Main method of program
@@ -36,7 +39,15 @@ public class Main {
         Console.getInstance().setScanner(new Scanner(System.in));
         ServerLogger.getInstace().info("Console handler was initialized successfully");
 
-        server = new UDPServer(SERVER_PORT);
+        int serverPort = DEFAULT_SERVER_PORT;
+        try {
+            serverPort = readServerPort();
+        } catch (IOException | NumberFormatException e) {
+            ServerLogger.getInstace().error("Error while reading server port from config file!", e);
+            ServerLogger.getInstace().info(String.format("Server port set to default value: %d", DEFAULT_SERVER_PORT));
+        }
+        server = new UDPServer(serverPort);
+
         try {
             server.open();
             ServerLogger.getInstace().info("Server started successfully");
@@ -101,18 +112,19 @@ public class Main {
         consoleReaderThread.start();
 
         BlockingQueue<SendingTask> sendingTasks = new LinkedBlockingQueue<>();
-        BlockingQueue<HandlingTask> handlingTasks = new LinkedBlockingQueue<>();
 
-        ExecutorService handlerExecutorService = Executors.newCachedThreadPool();
+        ClientRequestHandler requestHandler = new ClientRequestHandler(clientCommandsController, sendingTasks);
         ExecutorService senderExecutorService = Executors.newFixedThreadPool(N_SENDERS_THREADS);
         ForkJoinPool clientRequestsPool = ForkJoinPool.commonPool();
 
-        for(int i = 0; i < N_HANDLERS_THREADS; i++) {
-            handlerExecutorService.execute(new ClientRequestsHandler(clientCommandsController, handlingTasks, sendingTasks));
-        }
         for(int i = 0; i < N_SENDERS_THREADS; i++) {
-            senderExecutorService.execute(new ServerResponsesSender(sendingTasks));
+            senderExecutorService.submit(new ServerResponsesSender(sendingTasks));
         }
-        clientRequestsPool.execute(new ClientRequestsReader(server, handlingTasks));
+        clientRequestsPool.submit(new ClientRequestsReader(server, requestHandler));
+    }
+
+    private static int readServerPort() throws IOException, NumberFormatException {
+        Properties configProperties = new PropertiesFilesController().readProperties("serverConfig.properties");
+        return Integer.parseInt(configProperties.getProperty("port"));
     }
 }

@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 /**
  * Class which is used to work with UserCommand objects
  */
-public class CommandsController {
+public class CommandsController implements Cloneable {
     /**
      * List with all available commands
      */
@@ -52,5 +52,14 @@ public class CommandsController {
         command.initCommandArgs(packedCommand.arguments());
 
         return command;
+    }
+
+    @Override
+    public CommandsController clone() {
+        try {
+            return (CommandsController) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

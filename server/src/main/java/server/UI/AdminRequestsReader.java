@@ -1,4 +1,4 @@
-package server;
+package server.UI;
 
 import common.Commands.UserCommand;
 import common.Controllers.CommandsController;

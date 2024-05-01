@@ -1,7 +1,7 @@
 package server.Controllers;
 
 import common.Controllers.PropertiesFilesController;
-import server.ServerLogger;
+import server.utils.ServerLogger;
 
 import java.io.IOException;
 import java.sql.Connection;

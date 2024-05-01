@@ -7,8 +7,7 @@ import common.Exceptions.ServerErrorException;
 import common.net.requests.ServerResponse;
 import common.net.requests.ResultState;
 import server.Controllers.CollectionController;
-import server.Main;
-import server.ServerLogger;
+import server.utils.ServerLogger;
 
 import java.io.Serializable;
 import java.sql.SQLException;
