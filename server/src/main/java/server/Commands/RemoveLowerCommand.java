@@ -45,7 +45,7 @@ public class RemoveLowerCommand extends UserCommand {
      */
     @Override
     public ServerResponse execute() {
-        if(CollectionController.getInstance().getCollection().isEmpty()){
+        if(CollectionController.getInstance().isEmpty()){
             return new ServerResponse(ResultState.SUCCESS, "Collection is empty!");
         }
         int elementsRemoved = 0;

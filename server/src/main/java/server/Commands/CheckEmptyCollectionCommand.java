@@ -13,6 +13,6 @@ public class CheckEmptyCollectionCommand extends UserCommand {
 
     @Override
     public ServerResponse execute() {
-        return new ServerResponse(ResultState.SUCCESS, CollectionController.getInstance().getCollection().isEmpty());
+        return new ServerResponse(ResultState.SUCCESS, CollectionController.getInstance().isEmpty());
     }
 }
