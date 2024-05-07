@@ -39,47 +39,47 @@ public class Main {
      * @param args (not used)
      */
     public static void main(String[] args) {
-        ServerLogger.getInstace().info("Logger for server started");
+        ServerLogger.getInstance().info("Logger for server started");
 
         Console.getInstance().setScanner(new Scanner(System.in));
-        ServerLogger.getInstace().info("Console handler was initialized successfully");
+        ServerLogger.getInstance().info("Console handler was initialized successfully");
 
         int serverPort = DEFAULT_SERVER_PORT;
         try {
             serverPort = readServerPort();
         } catch (IOException | NumberFormatException e) {
-            ServerLogger.getInstace().error("Error while reading server port from config file!", e);
-            ServerLogger.getInstace().info(String.format("Server port set to default value: %d", DEFAULT_SERVER_PORT));
+            ServerLogger.getInstance().error("Error while reading server port from config file!", e);
+            ServerLogger.getInstance().info(String.format("Server port set to default value: %d", DEFAULT_SERVER_PORT));
         }
         server = new UDPServer(serverPort);
 
         try {
             server.open();
-            ServerLogger.getInstace().info("Server started successfully");
+            ServerLogger.getInstance().info("Server started successfully");
         } catch (IOException e) {
-            ServerLogger.getInstace().error("Error while starting server!", e);
+            ServerLogger.getInstance().error("Error while starting server!", e);
             System.exit(0);
         }
 
         try {
             DBController.getInstance().connect();
-            ServerLogger.getInstace().info("Database have been connected successfully!");
+            ServerLogger.getInstance().info("Database have been connected successfully!");
         } catch (SQLException e) {
-            ServerLogger.getInstace().error("Error while connecting database!", e);
+            ServerLogger.getInstance().error("Error while connecting database!", e);
             System.exit(0);
         } catch (ClassNotFoundException e) {
-            ServerLogger.getInstace().error("Database driver was not found!", e);
+            ServerLogger.getInstance().error("Database driver was not found!", e);
             System.exit(0);
         } catch (IOException e) {
-            ServerLogger.getInstace().error("Error while reading login data for database", e);
-            ServerLogger.getInstace().info("Make sure that file dp.properties is created and located in the same directory with server program");
+            ServerLogger.getInstance().error("Error while reading login data for database", e);
+            ServerLogger.getInstance().info("Make sure that file dp.properties is created and located in the same directory with server program");
             System.exit(0);
         }
 
         try {
             CollectionController.getInstance().loadCollection();
         } catch (SQLException e) {
-            ServerLogger.getInstace().error("Error while loading collection from database!", e);
+            ServerLogger.getInstance().error("Error while loading collection from database!", e);
             System.exit(0);
         }
 

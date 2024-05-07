@@ -2,7 +2,7 @@ package client;
 
 import common.Exceptions.ReceivingDataException;
 import common.Exceptions.SendingDataException;
-import common.utils.Serializator;
+import common.utils.Serializer;
 
 import java.io.*;
 import java.net.*;
@@ -77,7 +77,7 @@ public class UDPClient {
             byte arr[] = new byte[PACKET_SIZE];
             DatagramPacket dp = new DatagramPacket(arr, PACKET_SIZE);
             this.ds.receive(dp);
-            return Serializator.deserialize(arr);
+            return Serializer.deserialize(arr);
         }
         catch (Exception e){
             throw new ReceivingDataException("Server error occurred while receiving data!");
@@ -91,7 +91,7 @@ public class UDPClient {
      */
     public void sendObject(Serializable o) throws SendingDataException {
         try {
-            byte arr[] = Serializator.serialize(o);
+            byte arr[] = Serializer.serialize(o);
             DatagramPacket dp = new DatagramPacket(arr, arr.length, this.host, this.port);
             this.ds.send(dp);
         }

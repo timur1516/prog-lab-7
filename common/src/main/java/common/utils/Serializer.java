@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * Class with methods for serialization and deserialization of objects
  */
-public class Serializator {
+public class Serializer {
     /**
      * Method to serialize object
      * <p>Object must be {@link Serializable}

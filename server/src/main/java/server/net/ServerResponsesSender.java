@@ -1,6 +1,6 @@
 package server.net;
 
-import common.utils.Serializator;
+import common.utils.Serializer;
 import server.utils.ServerLogger;
 
 import java.io.IOException;
@@ -39,12 +39,12 @@ public class ServerResponsesSender implements Runnable{
                 DatagramChannel channel = DatagramChannel.open();
                 channel.connect(task.address());
                 ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
-                buf.put(Serializator.serialize(task.response()));
+                buf.put(Serializer.serialize(task.response()));
                 buf.flip();
                 channel.write(buf);
                 channel.close();
             } catch ( IOException e) {
-                ServerLogger.getInstace().error("Could not send data to client!", e);
+                ServerLogger.getInstance().error("Could not send data to client!", e);
             }
         }
     }

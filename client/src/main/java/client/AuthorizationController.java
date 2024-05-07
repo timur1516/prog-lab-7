@@ -32,7 +32,7 @@ public class AuthorizationController {
         if(!isRegistered.ask()) {
             while (true) {
                 try {
-                    singIn();
+                    singUp();
                     break;
                 } catch (AuthorizationException e) {
                     Console.getInstance().printError(e.getMessage());
@@ -96,7 +96,7 @@ public class AuthorizationController {
      * @throws AuthorizationException If authorization was not successful
      * @throws IOException If an error occurred while saving pepper to property file
      */
-    public static void singIn() throws SendingDataException, ReceivingDataException, AuthorizationException, IOException {
+    public static void singUp() throws SendingDataException, ReceivingDataException, AuthorizationException, IOException {
         Console.getInstance().print("Enter username: ");
         String userName = Console.getInstance().readLine();
         if(userName.isEmpty()){

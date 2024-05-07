@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Properties;
 
 /**
@@ -30,7 +29,7 @@ public class DBController {
     private static DBController CONTROLLER = null;
     private DBController() {};
 
-    public static DBController getInstance(){
+    public static synchronized DBController getInstance(){
         if(CONTROLLER == null){
             CONTROLLER = new DBController();
         }
@@ -66,6 +65,6 @@ public class DBController {
      */
     public void close() throws SQLException {
         this.connection.close();
-        ServerLogger.getInstace().info("Database was disconnected");
+        ServerLogger.getInstance().info("Database was disconnected");
     }
 }

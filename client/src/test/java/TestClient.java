@@ -30,7 +30,7 @@ public class TestClient implements Runnable {
                     Exception e = (Exception) response.data();
                     result = e.getMessage();
                 }
-                //Console.getInstance().printLn(String.format("Thread %d received responce %s from server", Thread.currentThread().getId(), result));
+                Console.getInstance().printLn(String.format("Thread %d received responce %s from server", Thread.currentThread().getId(), result));
             } catch (SendingDataException e) {
                 //throw new RuntimeException(e);
                 Console.getInstance().printLn(String.format("Error while sending data from client on thread %d", Thread.currentThread().getId()));

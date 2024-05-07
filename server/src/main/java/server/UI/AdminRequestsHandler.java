@@ -19,7 +19,7 @@ public class AdminRequestsHandler implements Runnable{
 
     @Override
     public void run() {
-        while (true){
+        while (!Thread.currentThread().isInterrupted()){
             PackedCommand packedCommand = CommandReader.getInstance().readCommand();
             if(packedCommand != null){
                 handleAdminRequest(packedCommand);

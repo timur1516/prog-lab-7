@@ -10,7 +10,7 @@ import server.Main;
 public class ServerLogger {
     private static Logger LOGGER = null;
 
-    public static synchronized Logger getInstace(){
+    public static synchronized Logger getInstance(){
         if(LOGGER == null){
             LOGGER = LoggerFactory.getLogger(Main.class);
         }

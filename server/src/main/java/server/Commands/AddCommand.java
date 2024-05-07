@@ -52,7 +52,7 @@ public class AddCommand extends UserCommand {
         try {
             CollectionController.getInstance().add(worker, username);
         } catch (SQLException e) {
-            ServerLogger.getInstace().error("Database error occurred!", e);
+            ServerLogger.getInstance().error("Database error occurred!", e);
             return new ServerResponse(ResultState.EXCEPTION, new ServerErrorException());
         }
         return new ServerResponse(ResultState.SUCCESS, "Worker added successfully!");

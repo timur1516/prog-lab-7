@@ -26,7 +26,7 @@ public class ClientRequestsReader implements Runnable{
                 if (handlingTask == null) continue;
                 this.requestHandler.handleTask(handlingTask);
             } catch (ReceivingDataException e) {
-                ServerLogger.getInstace().error("Could not receive data from client", e);
+                ServerLogger.getInstance().error("Could not receive data from client", e);
             }
         }
     }

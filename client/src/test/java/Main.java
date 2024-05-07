@@ -31,7 +31,7 @@ public class Main {
                 udpClient.init(InetAddress.getLocalHost(), Constants.DEFAULT_PORT_NUMBER, TIMEOUT);
                 udpClient.open();
             } catch (UnknownHostException | SocketException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(e); 
             }
             PackedCommand packedCommand = new PackedCommand("show", new ArrayList<>());
             ClientRequest clientRequest = new ClientRequest(ClientRequestType.EXECUTE_COMMAND, packedCommand);

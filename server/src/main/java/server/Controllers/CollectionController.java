@@ -216,10 +216,10 @@ public class CollectionController {
 
         if(isValid(data)) {
             collection = data;
-            ServerLogger.getInstace().info("Collection have been loaded successfully!");
+            ServerLogger.getInstance().info("Collection have been loaded successfully!");
         }
         else{
-            ServerLogger.getInstace().error("Collection was not loaded! Not valid data!");
+            ServerLogger.getInstance().error("Collection was not loaded! Not valid data!");
         }
     }
 

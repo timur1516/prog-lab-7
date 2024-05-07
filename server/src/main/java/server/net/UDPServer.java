@@ -1,7 +1,7 @@
 package server.net;
 
 import common.Exceptions.ReceivingDataException;
-import common.utils.Serializator;
+import common.utils.Serializer;
 import common.net.requests.ClientRequest;
 import server.utils.ServerLogger;
 
@@ -42,7 +42,7 @@ public class UDPServer {
      */
     public void stop() throws IOException {
         this.serverChannel.close();
-        ServerLogger.getInstace().info("Server stopped");
+        ServerLogger.getInstance().info("Server stopped");
     }
 
     /**
@@ -55,7 +55,7 @@ public class UDPServer {
             ByteBuffer buf = ByteBuffer.allocate(PACKET_SIZE);
             SocketAddress clientAddress = this.serverChannel.receive(buf);
             if(clientAddress == null) return null;
-            ClientRequest clientRequest = (ClientRequest) Serializator.deserialize(buf.array());
+            ClientRequest clientRequest = (ClientRequest) Serializer.deserialize(buf.array());
             return new HandlingTask(clientRequest, clientAddress);
         }
         catch (Exception e){
