@@ -8,7 +8,7 @@ public class CommonConstants {
     /**
      * Size of buffer which is used to exchange information between client and server
      */
-    public static final int PACKET_SIZE = 32000;
+    public static final int PACKET_SIZE = 64000;
 
     /**
      * Global format for date
